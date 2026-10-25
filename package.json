@@ -1,0 +1,27 @@
+{
+  "name": "le-revenu-forum",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Forum communautaire Le Revenu — Next.js 15 (frontend) + Strapi v5 (backend) + PostgreSQL",
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c red,blue \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build": "npm --prefix backend run build && npm --prefix frontend run build",
+    "start": "concurrently -n backend,frontend -c red,blue \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:backend": "npm --prefix backend run start",
+    "start:frontend": "npm --prefix frontend run start",
+    "seed": "npm --prefix backend run seed",
+    "test": "npm --prefix backend run test",
+    "test:unit": "npm --prefix backend run test:unit",
+    "test:integration": "npm --prefix backend run test:integration",
+    "ts:types": "npm --prefix backend run ts:types"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

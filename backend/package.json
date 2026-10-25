@@ -1,0 +1,47 @@
+{
+  "name": "le-revenu-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API Strapi v5 du forum communautaire Le Revenu (PostgreSQL)",
+  "scripts": {
+    "build": "strapi build",
+    "deploy": "strapi deploy",
+    "dev": "strapi develop",
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "strapi": "strapi",
+    "ts:types": "strapi ts:generate-types",
+    "seed": "ts-node scripts/seed.ts",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@strapi/plugin-users-permissions": "5.52.2",
+    "@strapi/strapi": "5.52.2",
+    "better-sqlite3": "12.8.0",
+    "pg": "^8.23.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.30.3",
+    "styled-components": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/supertest": "^6.0.3",
+    "supertest": "^7.3.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5",
+    "vitest": "^2.1.9"
+  },
+  "engines": {
+    "node": ">=20.0.0 <=26.x.x",
+    "npm": ">=6.0.0"
+  },
+  "strapi": {
+    "uuid": "7f1c3a52-9d4b-4e8f-a6c1-2b8d5e0f4791"
+  }
+}

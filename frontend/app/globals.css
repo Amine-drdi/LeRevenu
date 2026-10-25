@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Thème sombre par défaut (esprit maquette), variante claire basculable
+ * via la classe `dark` sur <html> (voir tailwind.config.ts : darkMode: 'class').
+ */
+:root {
+  color-scheme: dark;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html:not(.dark) {
+  color-scheme: light;
+}
