@@ -1,15 +1,15 @@
 import type { Core } from '@strapi/strapi';
 
-export default ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => ({
+export default ({ env }: Core.Config.Shared.ConfigParams) => ({
   auth: {
     secret: env('ADMIN_JWT_SECRET'),
   },
   apiToken: {
-    salts: env('API_TOKEN_SALT'),
+    salt: env('API_TOKEN_SALT'),
   },
   transfer: {
     token: {
-      salts: env('TRANSFER_TOKEN_SALT'),
+      salt: env('TRANSFER_TOKEN_SALT'),
     },
   },
   flags: {

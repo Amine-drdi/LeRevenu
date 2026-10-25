@@ -1,4 +1,5 @@
 import type { Core } from '@strapi/strapi';
+import { syncRolePermissions } from './bootstrap/permissions';
 
 export default {
   /**
@@ -9,6 +10,10 @@ export default {
 
   /**
    * Executed after the application initializes (routes, middlewares, hooks...).
+   * Les plugins (dont users-permissions) sont déjà initialisés à ce stade :
+   * on peut donc synchroniser les permissions des rôles.
    */
-  bootstrap(/* { strapi }: { strapi: Core.Strapi } */) {},
+  async bootstrap({ strapi }: { strapi: Core.Strapi }) {
+    await syncRolePermissions(strapi);
+  },
 };
