@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import type {
   ApiErrorBody,
   AuthResponse,
+  AuthUser,
   Category,
   CreateDiscussionInput,
   CreateReplyInput,
@@ -166,13 +167,33 @@ async function authedFetch<T>(path: string, init: RequestInit = {}): Promise<T> 
 // AUTH + ÉCRITURES — appelés depuis les Client Components
 // ---------------------------------------------------------------------------
 
+/**
+ * Les endpoints /auth/local* ne suivent pas l'enveloppe du content API :
+ * ils répondent `{ jwt, user }` à la racine (pas de `data`). D'où un parseur
+ * dédié — parseResponse (enveloppe `data`) renverrait `undefined` et ferait
+ * échouer la déstructuration `{ jwt, user }` dans l'AuthContext.
+ */
+async function parseAuthResponse(res: Response): Promise<AuthResponse> {
+  const body = (await res.json().catch(() => null)) as
+    | ({ jwt: string; user: AuthUser } | { error: ApiErrorBody })
+    | null;
+
+  if (!res.ok) {
+    const error = (body as { error?: ApiErrorBody } | null)?.error;
+    throw new ApiRequestError(
+      error ?? { status: res.status, name: res.statusText, message: 'Erreur API inattendue.' }
+    );
+  }
+  return body as AuthResponse;
+}
+
 export async function login(identifier: string, password: string): Promise<AuthResponse> {
   const res = await fetch(`${API_URL}/auth/local`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ identifier, password }),
   });
-  return parseResponse<AuthResponse>(res);
+  return parseAuthResponse(res);
 }
 
 export async function register(
@@ -185,7 +206,7 @@ export async function register(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, email, password }),
   });
-  return parseResponse<AuthResponse>(res);
+  return parseAuthResponse(res);
 }
 
 /**
