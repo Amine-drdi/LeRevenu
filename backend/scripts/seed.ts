@@ -284,8 +284,13 @@ async function main() {
         | { id: number; documentId?: string; document_id?: string }
         | null;
 
+      // L'id NUMÉRIQUE est requis pour filtrer la relation replies (la colonne
+      // de jointure est un integer côté PostgreSQL : filtrer par documentId y
+      // déclenche un 22P02 — SQLite tolérait, Postgres est strict).
+      let discussionRowId: number;
       let discussionId = '';
       if (existing) {
+        discussionRowId = existing.id;
         discussionId = existing.documentId ?? existing.document_id ?? '';
         app.log.info(`Discussion existante : ${discussion.title}`);
       } else {
@@ -299,6 +304,7 @@ async function main() {
             slug: `${slugify(discussion.title)}-${randomSuffix()}`,
           },
         });
+        discussionRowId = (created as { id: number }).id;
         discussionId = created.documentId;
         createdDiscussions += 1;
         app.log.info(`Discussion créée : ${discussion.title}`);
@@ -306,7 +312,7 @@ async function main() {
 
       for (const reply of discussion.replies) {
         const replyExists = await app.db.query('api::reply.reply').findOne({
-          where: { discussion: discussionId, content: reply.content },
+          where: { discussion: discussionRowId, content: reply.content },
         });
         if (replyExists) continue;
         await app.documents('api::reply.reply').create({
