@@ -7,6 +7,7 @@ import type {
   CreateDiscussionInput,
   CreateReplyInput,
   Discussion,
+  Reply,
   StrapiListResponse,
   StrapiSingleResponse,
 } from '@/types';
@@ -198,8 +199,9 @@ export async function createDiscussion(input: CreateDiscussionInput): Promise<Di
   });
 }
 
-export async function createReply(input: CreateReplyInput) {
-  return authedFetch('/replies', {
+/** Création d'une réponse — renvoie la réponse créée (auteur peuplé côté API). */
+export async function createReply(input: CreateReplyInput): Promise<Reply> {
+  return authedFetch<Reply>('/replies', {
     method: 'POST',
     body: JSON.stringify({ data: input }),
   });

@@ -2,12 +2,13 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import Header from '@/components/Header';
+import ReplySection from '@/components/ReplySection';
 import { getDiscussionBySlug } from '@/lib/api';
 
 /**
  * Détail d'une discussion (Server Component) — URL propre /discussions/[slug].
- * La discussion et ses réponses (avec auteurs) viennent de l'API Strapi ;
- * le formulaire de réponse est un Client Component (étape 6).
+ * La discussion vient de l'API Strapi (ISR) ; la section réponses
+ * (liste + formulaire) est un Client Component : components/ReplySection.tsx.
  */
 const dateTimeFmt = new Intl.DateTimeFormat('fr-FR', {
   dateStyle: 'long',
@@ -35,7 +36,6 @@ export default async function DiscussionDetail({
 }) {
   const { slug } = await params;
   const discussion = await getDiscussionBySlug(slug);
-  const replies = discussion.replies ?? [];
 
   return (
     <div className="min-h-screen">
@@ -79,40 +79,10 @@ export default async function DiscussionDetail({
           </div>
         </article>
 
-        <section className="mt-10">
-          <h2 className="font-serif text-2xl text-white">
-            Réponses <span className="text-zinc-500">({discussion.replyCount ?? replies.length})</span>
-          </h2>
-
-          {replies.length === 0 ? (
-            <p className="mt-4 rounded-lg border border-dashed border-zinc-700 p-8 text-center text-sm text-zinc-500">
-              Aucune réponse pour le moment.
-            </p>
-          ) : (
-            <ul className="mt-4 space-y-4">
-              {replies.map((reply) => (
-                <li key={reply.documentId} className="rounded-lg border border-zinc-800 bg-zinc-900 p-5">
-                  <div className="flex items-center justify-between text-xs text-zinc-500">
-                    <span className="font-medium text-zinc-300">
-                      {reply.author?.username ?? 'anonyme'}
-                    </span>
-                    <span>{dateTimeFmt.format(new Date(reply.createdAt))}</span>
-                  </div>
-                  <p className="mt-3 whitespace-pre-line text-sm text-zinc-200">{reply.content}</p>
-                </li>
-              ))}
-            </ul>
-          )}
-
-          <div className="mt-8">
-            <p className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-4 text-center text-sm text-zinc-500">
-              Connectez-vous pour répondre —{' '}
-              <Link href="/connexion" className="text-brand-light hover:underline">
-                se connecter
-              </Link>
-            </p>
-          </div>
-        </section>
+        <ReplySection
+          discussionDocumentId={discussion.documentId}
+          initialReplies={discussion.replies ?? []}
+        />
       </main>
     </div>
   );
