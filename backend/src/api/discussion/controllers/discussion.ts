@@ -102,8 +102,7 @@ export default factories.createCoreController('api::discussion.discussion', ({ s
    * (1 pour les auteurs, 1 pour les compteurs) — les filtres, le tri et la
    * pagination restent intégralement gérés par Strapi côté serveur.
    */
-  async function attachAuthorsAndCounts(discussions: any[]) {
-    const docIds = discussions.map((d) => d.documentId).filter(Boolean);
+  async function attachAuthorsAndCounts(discussions: any[]) {    const docIds = discussions.map((d) => d.documentId).filter(Boolean);
     if (docIds.length === 0) return;
 
     const rawDiscussions = (await strapi.db
@@ -146,6 +145,56 @@ export default factories.createCoreController('api::discussion.discussion', ({ s
     }
   }
 
+  /**
+   * Joint les réponses (avec auteur public, ordre chronologique) à chaque
+   * discussion donnée. Utilisé par findOne et — quand la requête filtre sur
+   * un slug unique — par find : le frontend charge le détail par slug
+   * (GET /discussions?filters[slug][$eq]=…) et doit recevoir les réponses en
+   * un seul aller-retour.
+   */
+  async function attachReplies(discussions: any[]) {
+    const docIds = discussions.map((d) => d.documentId).filter(Boolean);
+    if (docIds.length === 0) return;
+
+    const replies = (await strapi.db
+      .query('api::reply.reply')
+      .findMany({
+        where: { discussion: { documentId: { $in: docIds } } },
+        orderBy: { createdAt: 'asc' },
+        populate: ['author', 'discussion'],
+      })) as Array<{
+      id: number;
+      documentId: string;
+      document_id?: string;
+      content: string;
+      createdAt: string;
+      author: Record<string, any> | null;
+      discussion: { documentId: string } | null;
+    }>;
+
+    const repliesByDocId = new Map<string, Array<Record<string, any>>>();
+    for (const reply of replies) {
+      const key = reply.discussion?.documentId;
+      if (!key) continue;
+      const publicReply = {
+        id: reply.id,
+        documentId: reply.documentId ?? reply.document_id,
+        content: reply.content,
+        createdAt: reply.createdAt,
+        author: toAuthor(reply.author),
+      };
+      const list = repliesByDocId.get(key) ?? [];
+      list.push(publicReply);
+      repliesByDocId.set(key, list);
+    }
+
+    for (const discussion of discussions) {
+      const list = repliesByDocId.get(discussion.documentId) ?? [];
+      discussion.replies = list;
+      discussion.replyCount = list.length;
+    }
+  }
+
   return {
     create: createDiscussion,
 
@@ -153,6 +202,12 @@ export default factories.createCoreController('api::discussion.discussion', ({ s
       const response = (await super.find(ctx)) as { data?: any[] | any; meta?: unknown };
       const discussions = Array.isArray(response?.data) ? response.data : [];
       await attachAuthorsAndCounts(discussions);
+
+      // Détail par slug unique (frontend : getDiscussionBySlug) → réponses jointes.
+      const slugEq = (ctx.query as Record<string, any>)?.filters?.slug?.$eq;
+      if (slugEq && discussions.length > 0) {
+        await attachReplies(discussions);
+      }
       return response;
     },
 
@@ -169,21 +224,7 @@ export default factories.createCoreController('api::discussion.discussion', ({ s
       })) as { author: Record<string, any> | null } | null;
       discussion.author = toAuthor(raw?.author);
 
-      const replies = (await strapi.db
-        .query('api::reply.reply')
-        .findMany({
-        where: { discussion: { documentId: discussion.documentId } },
-        orderBy: { createdAt: 'asc' },
-        populate: ['author'],
-      })) as Array<Record<string, any>>;
-      discussion.replies = replies.map((reply) => ({
-        id: reply.id,
-        documentId: reply.documentId ?? reply.document_id,
-        content: reply.content,
-        createdAt: reply.createdAt,
-        author: toAuthor(reply.author as Record<string, any> | null),
-      }));
-      discussion.replyCount = replies.length;
+      await attachReplies([discussion]);
       return response;
     },
   };
