@@ -108,11 +108,25 @@ export default factories.createCoreController('api::discussion.discussion', ({ s
 
     const rawDiscussions = (await strapi.db
       .query('api::discussion.discussion')
-      .findMany({ where: { documentId: { $in: docIds } }, populate: ['author'] })) as Array<{
+      .findMany({ where: { documentId: { $in: docIds } }, populate: ['author', 'category'] })) as Array<{
       documentId: string;
       author: Record<string, any> | null;
+      category: Record<string, any> | null;
     }>;
     const authorByDocId = new Map(rawDiscussions.map((d) => [d.documentId, d.author]));
+    const categoryByDocId = new Map(
+      rawDiscussions.map((d) => [
+        d.documentId,
+        d.category
+          ? {
+              id: d.category.id,
+              documentId: d.category.documentId ?? d.category.document_id,
+              name: d.category.name,
+              slug: d.category.slug,
+            }
+          : null,
+      ])
+    );
 
     const replies = (await strapi.db
       .query('api::reply.reply')
@@ -127,6 +141,7 @@ export default factories.createCoreController('api::discussion.discussion', ({ s
 
     for (const discussion of discussions) {
       discussion.author = toAuthor(authorByDocId.get(discussion.documentId));
+      discussion.category = categoryByDocId.get(discussion.documentId) ?? null;
       discussion.replyCount = countByDocId.get(discussion.documentId) ?? 0;
     }
   }
