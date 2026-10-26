@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import Header from '@/components/Header';
 import ReplySection from '@/components/ReplySection';
-import { getDiscussionBySlug } from '@/lib/api';
+import { ApiRequestError, getDiscussionBySlug } from '@/lib/api';
 
 /**
  * Détail d'une discussion (Server Component) — URL propre /discussions/[slug].
@@ -24,8 +24,13 @@ export async function generateMetadata({
   try {
     const discussion = await getDiscussionBySlug(slug);
     return { title: `${discussion.title} — Le Revenu Forum` };
-  } catch {
-    return { title: 'Le Revenu — Forum' };
+  } catch (error) {
+    // API injoignable : titre générique, error.tsx prend le relais au rendu.
+    // notFound() ne doit JAMAIS être avalé ici — sinon le statut 404 devient 200.
+    if (error instanceof ApiRequestError) {
+      return { title: 'Le Revenu — Forum' };
+    }
+    throw error;
   }
 }
 
