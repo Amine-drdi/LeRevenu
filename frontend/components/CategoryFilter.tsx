@@ -3,7 +3,7 @@ import Link from 'next/link';
 import type { Category } from '@/types';
 
 /**
- * Filtre par catégorie (Server Component) : liens vers l'accueil avec le
+ * Filtre par catégorie (Server Component) : puces vers l'accueil avec le
  * paramètre `?categorie=` — le filtrage est exécuté côté Strapi.
  */
 export default function CategoryFilter({
@@ -17,18 +17,14 @@ export default function CategoryFilter({
     <Link
       key={slug || 'all'}
       href={slug ? `/?categorie=${encodeURIComponent(slug)}` : '/'}
-      className={
-        isActive
-          ? 'rounded-full bg-brand px-3 py-1.5 text-sm font-semibold text-white'
-          : 'rounded-full border border-zinc-700 px-3 py-1.5 text-sm text-zinc-300 transition hover:border-zinc-500 hover:text-white'
-      }
+      className={`chip-f ${isActive ? 'on' : ''}`}
     >
       {label}
     </Link>
   );
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="chips">
       {link('', 'Toutes', !active)}
       {categories.map((category) => link(category.slug, category.name, active === category.slug))}
     </div>

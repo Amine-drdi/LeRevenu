@@ -7,18 +7,21 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' });
 
 export const metadata: Metadata = {
-  title: 'Le Revenu — Forum',
-  description: "Espace communautaire des lecteurs du Revenu : discussions, questions et réponses entre passionnés de finance.",
+  title: 'Le Revenu — Communauté',
+  description:
+    "Espace communautaire des lecteurs du Revenu : discussions, questions et réponses entre passionnés de finance.",
 };
 
 /**
- * Shell minimal de démarrage (Étape 1) — sera étendu aux étapes 4-6
- * (Header, AuthProvider, thème sombre/clair, etc.).
+ * Racine de l'application — design system Le Revenu (voir globals.css).
+ * Le thème clair/sombre suit le réglage système (prefers-color-scheme) ;
+ * les variables de police (--font-inter / --font-playfair) consomment les
+ * deux polices auto-hébergées par next/font.
  */
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="fr" className={`dark ${inter.variable} ${playfair.variable}`}>
-      <body className="min-h-screen bg-zinc-950 font-sans text-zinc-100 antialiased">
+    <html lang="fr" className={`${inter.variable} ${playfair.variable}`}>
+      <body>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

@@ -1,9 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import Avatar from '@/components/Avatar';
 import Header from '@/components/Header';
+import { IconArrowLeft } from '@/components/icons';
 import ReplySection from '@/components/ReplySection';
-import { ApiRequestError, getDiscussionBySlug } from '@/lib/api';
+import SideNav from '@/components/SideNav';
+import { ApiRequestError, getCategories, getDiscussionBySlug } from '@/lib/api';
 
 /**
  * Détail d'une discussion (Server Component) — URL propre /discussions/[slug].
@@ -23,12 +26,12 @@ export async function generateMetadata({
   const { slug } = await params;
   try {
     const discussion = await getDiscussionBySlug(slug);
-    return { title: `${discussion.title} — Le Revenu Forum` };
+    return { title: `${discussion.title} — Le Revenu` };
   } catch (error) {
     // API injoignable : titre générique, error.tsx prend le relais au rendu.
     // notFound() ne doit JAMAIS être avalé ici — sinon le statut 404 devient 200.
     if (error instanceof ApiRequestError) {
-      return { title: 'Le Revenu — Forum' };
+      return { title: 'Le Revenu — Communauté' };
     }
     throw error;
   }
@@ -40,55 +43,61 @@ export default async function DiscussionDetail({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const discussion = await getDiscussionBySlug(slug);
+  // La barre latérale affiche les espaces, comme sur l'accueil.
+  const [discussion, categories] = await Promise.all([
+    getDiscussionBySlug(slug),
+    getCategories(),
+  ]);
+  const authorName = discussion.author?.username ?? 'anonyme';
 
   return (
-    <div className="min-h-screen">
+    <div>
       <Header />
-      <main className="mx-auto max-w-3xl px-4 py-10">
-        <Link href="/" className="text-sm text-zinc-500 transition hover:text-brand-light">
-          ← Toutes les discussions
-        </Link>
+      <div className="wrap">
+        <div className="layout no-right">
+          <SideNav categories={categories} active={discussion.category?.slug} />
 
-        <article className="mt-4">
-          <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span
-              className={
-                discussion.type === 'question'
-                  ? 'rounded-full bg-brand/15 px-2.5 py-0.5 font-semibold uppercase tracking-wide text-brand-light'
-                  : 'rounded-full bg-zinc-700/60 px-2.5 py-0.5 font-semibold uppercase tracking-wide text-zinc-300'
-              }
-            >
-              {discussion.type === 'question' ? 'Question' : 'Discussion'}
-            </span>
-            {discussion.category && (
-              <span className="rounded-full border border-zinc-700 px-2.5 py-0.5 text-zinc-400">
-                {discussion.category.name}
-              </span>
-            )}
-            <span className="text-zinc-500">
-              {dateTimeFmt.format(new Date(discussion.createdAt))}
-            </span>
-          </div>
+          <main className="main">
+            <Link href="/" className="back">
+              <IconArrowLeft className="icon" />
+              Toutes les discussions
+            </Link>
 
-          <h1 className="mt-3 font-serif text-3xl leading-tight text-white">
-            {discussion.title}
-          </h1>
+            <article className="article">
+              <div className="disc-top">
+                <span className={`chip ${discussion.type === 'question' ? 'chip-q' : 'chip-d'}`}>
+                  {discussion.type === 'question' ? 'Question' : 'Discussion'}
+                </span>
+                {discussion.category && (
+                  <span className="chip chip-cat">{discussion.category.name}</span>
+                )}
+                <span className="sep" aria-hidden="true">
+                  ·
+                </span>
+                <time dateTime={discussion.createdAt}>
+                  {dateTimeFmt.format(new Date(discussion.createdAt))}
+                </time>
+              </div>
 
-          <p className="mt-2 text-sm text-zinc-500">
-            par <span className="font-medium text-zinc-300">{discussion.author?.username ?? 'anonyme'}</span>
-          </p>
+              <h1 className="article-t">{discussion.title}</h1>
 
-          <div className="mt-6 rounded-lg border border-zinc-800 bg-zinc-900 p-6">
-            <p className="whitespace-pre-line text-zinc-200">{discussion.content}</p>
-          </div>
-        </article>
+              <p className="article-m">
+                <Avatar username={authorName} size="sm" />
+                <span>
+                  par <span className="who">{authorName}</span>
+                </span>
+              </p>
 
-        <ReplySection
-          discussionDocumentId={discussion.documentId}
-          initialReplies={discussion.replies ?? []}
-        />
-      </main>
+              <div className="article-b">{discussion.content}</div>
+            </article>
+
+            <ReplySection
+              discussionDocumentId={discussion.documentId}
+              initialReplies={discussion.replies ?? []}
+            />
+          </main>
+        </div>
+      </div>
     </div>
   );
 }

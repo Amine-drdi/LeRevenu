@@ -2,52 +2,81 @@
 
 import Link from 'next/link';
 
+import Avatar from '@/components/Avatar';
+import { IconLogOut, IconPlus } from '@/components/icons';
 import { useAuth } from '@/context/AuthContext';
 
 /**
- * En-tête du forum — Client Component car il dépend de l'état d'auth.
+ * Barre de liaison lerevenu.com + en-tête collé de la communauté.
+ * Client Component : la zone « compte » dépend de l'état d'auth (contexte).
  */
 export default function Header() {
   const { user, logout } = useAuth();
 
   return (
-    <header className="sticky top-0 z-10 border-b border-zinc-800 bg-zinc-950/90 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-4 px-4">
-        <Link href="/" className="flex items-baseline gap-2">
-          <span className="font-serif text-2xl font-bold text-white">Le Revenu</span>
-          <span className="hidden rounded-full border border-brand/40 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-brand sm:inline">
-            Forum
-          </span>
-        </Link>
-
-        <nav className="flex items-center gap-4 text-sm">
-          <Link href="/" className="hidden text-zinc-300 transition hover:text-white sm:inline">
-            Discussions
-          </Link>
-          <Link
-            href="/discussions/nouvelle"
-            className="rounded bg-brand px-3 py-1.5 font-semibold text-white transition hover:bg-brand-dark"
-          >
-            + Nouvelle discussion
-          </Link>
-          {user ? (
-            <div className="flex items-center gap-3">
-              <span className="hidden text-zinc-400 md:inline">{user.username}</span>
-              <button
-                type="button"
-                onClick={logout}
-                className="text-zinc-400 transition hover:text-white"
-              >
-                Déconnexion
-              </button>
-            </div>
-          ) : (
-            <Link href="/connexion" className="text-zinc-300 transition hover:text-white">
-              Connexion
-            </Link>
-          )}
-        </nav>
+    <>
+      {/* Barre de liaison vers les sites du groupe */}
+      <div className="sitebar">
+        <div className="wrap">
+          <a href="https://www.lerevenu.com" className="sb-back">
+            lerevenu.com
+          </a>
+          <nav className="sb-links" aria-label="Sites Le Revenu">
+            <a href="https://www.lerevenu.com/bourse">Bourse</a>
+            <a href="https://www.lerevenu.com/immobilier">Immobilier</a>
+            <a href="https://www.lerevenu.com/fiscalite">Fiscalité</a>
+            <a href="https://www.lerevenu.com/patrimoine">Patrimoine</a>
+          </nav>
+          <div className="sb-right">
+            <a
+              href="https://www.lerevenu.com"
+              className="sb-sub"
+            >
+              S’abonner
+            </a>
+          </div>
+        </div>
       </div>
-    </header>
+
+      {/* En-tête principal */}
+      <header className="hdr">
+        <div className="wrap hdr-in">
+          <Link href="/" className="brand" aria-label="Le Revenu — Communauté, accueil">
+            <span className="lr-logo" aria-hidden="true">
+              <span className="lr-le">LE</span>
+              <span>REVENU</span>
+            </span>
+            <span className="brand-sep" aria-hidden="true" />
+            <span className="brand-sub">Communauté</span>
+          </Link>
+
+          <div className="hdr-act">
+            <Link href="/discussions/nouvelle" className="btn btn-primary btn-sm">
+              <IconPlus className="icon" />
+              Nouvelle discussion
+            </Link>
+            {user ? (
+              <span className="me-btn">
+                <Avatar username={user.username} size="sm" />
+                <span className="who">{user.username}</span>
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="icon-btn"
+                  title="Se déconnecter"
+                  aria-label="Se déconnecter"
+                >
+                  <IconLogOut className="icon" />
+                </button>
+              </span>
+            ) : (
+              <Link href="/connexion" className="btn btn-secondary btn-sm">
+                Connexion
+              </Link>
+            )}
+          </div>
+        </div>
+      </header>
+    </>
   );
 }

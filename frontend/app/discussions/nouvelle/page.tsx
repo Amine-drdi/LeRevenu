@@ -67,66 +67,82 @@ export default function NouvelleDiscussionPage() {
     }
   };
 
-  const field =
-    'w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 focus:border-brand focus:outline-none';
-
   // Hydratation du contexte d'auth : éviter un flash « connectez-vous ».
   if (authLoading) {
     return (
-      <div className="min-h-screen">
+      <div>
         <Header />
-        <main className="mx-auto max-w-3xl px-4 py-10">
-          <div className="h-10 w-72 animate-pulse rounded bg-zinc-800" />
-          <div className="mt-6 h-96 animate-pulse rounded-lg bg-zinc-900" />
-        </main>
+        <div className="wrap">
+          <div className="center-page">
+            <div className="skel" style={{ height: 36, maxWidth: 320 }} />
+            <div className="skel" style={{ height: 420 }} />
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen">
+      <div>
         <Header />
-        <main className="mx-auto max-w-3xl px-4 py-24 text-center">
-          <h1 className="font-serif text-3xl text-white">Nouvelle discussion</h1>
-          <p className="mt-4 text-zinc-400">
-            Connectez-vous pour créer une discussion —{' '}
-            <Link href="/connexion" className="text-brand-light hover:underline">
-              se connecter
-            </Link>
-            .
-          </p>
-        </main>
+        <div className="wrap">
+          <div className="center-page" style={{ textAlign: 'center' }}>
+            <h1 className="page-title">Nouvelle discussion</h1>
+            <div className="empty">
+              <p className="t">Connectez-vous pour participer</p>
+              <p>
+                <Link href="/connexion">Se connecter</Link> ou créer un compte, puis lancez
+                votre discussion.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen">
+    <div>
       <Header />
-      <main className="mx-auto max-w-3xl px-4 py-10">
-        <h1 className="font-serif text-3xl text-white">Nouvelle discussion</h1>
+      <div className="wrap">
+        <div className="center-page">
+          <div>
+            <h1 className="page-title">Nouvelle discussion</h1>
+            <p className="page-sub">
+              Partagez une question ou un sujet avec la communauté.
+            </p>
+          </div>
 
-        <form onSubmit={onSubmit} className="mt-8 space-y-5">
-          <div className="flex flex-wrap gap-4">
-            <label className="block text-sm text-zinc-300">
+          <form onSubmit={onSubmit} className="form">
+            <label className="fld">
               Type
-              <select
-                value={type}
-                onChange={(e) => setType(e.target.value as DiscussionType)}
-                className={`mt-1 ${field}`}
-              >
-                <option value="discussion">Discussion</option>
-                <option value="question">Question</option>
-              </select>
+              <div className="seg" style={{ marginTop: 6 }}>
+                {(
+                  [
+                    ['discussion', 'Discussion'],
+                    ['question', 'Question'],
+                  ] as const
+                ).map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    className={type === value ? 'on' : ''}
+                    onClick={() => setType(value)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
             </label>
-            <label className="block min-w-52 flex-1 text-sm text-zinc-300">
-              Catégorie
+
+            <label className="fld">
+              Espace
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 required
-                className={`mt-1 ${field}`}
+                className="select"
               >
                 {categories.map((c) => (
                   <option key={c.documentId} value={c.documentId}>
@@ -135,53 +151,45 @@ export default function NouvelleDiscussionPage() {
                 ))}
               </select>
             </label>
-          </div>
 
-          <label className="block text-sm text-zinc-300">
-            Titre
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-              minLength={10}
-              placeholder="Un titre explicite (10 caractères minimum)"
-              className={`mt-1 ${field}`}
-            />
-          </label>
+            <label className="fld">
+              Titre
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+                minLength={10}
+                placeholder="Un titre explicite (10 caractères minimum)"
+                className="input"
+              />
+            </label>
 
-          <label className="block text-sm text-zinc-300">
-            Contenu
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              required
-              rows={10}
-              placeholder="Détaillez votre question ou votre sujet…"
-              className={`mt-1 resize-y ${field}`}
-            />
-          </label>
+            <label className="fld">
+              Contenu
+              <textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                required
+                rows={10}
+                placeholder="Détaillez votre question ou votre sujet…"
+                className="area"
+              />
+            </label>
 
-          {error && (
-            <p className="rounded-lg border border-brand/40 bg-brand/10 px-3 py-2 text-sm text-brand-light">
-              {error}
-            </p>
-          )}
+            {error && <p className="alert">{error}</p>}
 
-          <div className="flex items-center gap-4">
-            <button
-              type="submit"
-              disabled={pending}
-              className="rounded bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {pending ? 'Publication…' : 'Publier la discussion'}
-            </button>
-            <Link href="/" className="text-sm text-zinc-400 transition hover:text-white">
-              Annuler
-            </Link>
-          </div>
-        </form>
-      </main>
+            <div className="form-actions">
+              <button type="submit" disabled={pending} className="btn btn-primary">
+                {pending ? 'Publication…' : 'Publier la discussion'}
+              </button>
+              <Link href="/" className="btn btn-quiet">
+                Annuler
+              </Link>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }

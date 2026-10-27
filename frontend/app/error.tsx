@@ -14,19 +14,23 @@ export default function Error({
   }, [error]);
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-24 text-center">
-      <p className="font-serif text-6xl text-brand">Erreur</p>
-      <h1 className="mt-4 font-serif text-2xl text-white">L&apos;API est injoignable</h1>
-      <p className="mt-2 text-zinc-400">
-        Vérifiez que le backend Strapi tourne (port 1337) puis réessayez.
-      </p>
-      <button
-        type="button"
-        onClick={reset}
-        className="mt-6 rounded bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-dark"
-      >
-        Réessayer
-      </button>
+    <main className="wrap">
+      <div className="auth-page" style={{ textAlign: 'center' }}>
+        <p className="page-title" style={{ fontSize: 44 }}>
+          Oups
+        </p>
+        <h1 className="sec-title" style={{ justifyContent: 'center' }}>
+          L&apos;API est injoignable
+        </h1>
+        <p className="page-sub">
+          Vérifiez que le backend Strapi tourne (port 1337) puis réessayez.
+        </p>
+        <div>
+          <button type="button" onClick={reset} className="btn btn-primary">
+            Réessayer
+          </button>
+        </div>
+      </div>
     </main>
   );
 }

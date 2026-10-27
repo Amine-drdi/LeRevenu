@@ -1,7 +1,11 @@
+import Link from 'next/link';
+
 import CategoryFilter from '@/components/CategoryFilter';
 import DiscussionCard from '@/components/DiscussionCard';
 import Header from '@/components/Header';
+import { IconCheck, IconPlus } from '@/components/icons';
 import Pagination from '@/components/Pagination';
+import SideNav from '@/components/SideNav';
 import SortSelect from '@/components/SortSelect';
 import { getCategories, getDiscussions } from '@/lib/api';
 
@@ -34,47 +38,99 @@ export default async function Home({
   ]);
 
   const { data, meta } = discussions;
+  const total = meta.pagination.total;
 
   return (
-    <div className="min-h-screen">
+    <div>
       <Header />
-      <main className="mx-auto max-w-5xl px-4 py-10">
-        <div className="mb-8">
-          <h1 className="font-serif text-4xl text-white">Discussions</h1>
-          <p className="mt-2 text-zinc-400">
-            {meta.pagination.total} discussion{meta.pagination.total > 1 ? 's' : ''} entre
-            passionnés de finance.
-          </p>
+      <div className="wrap">
+        <div className="layout">
+          <SideNav categories={categories} active={categorie} />
+
+          <main className="main">
+            <div className="page-head">
+              <div>
+                <h1 className="page-title">Discussions</h1>
+                <p className="page-sub">
+                  {total} discussion{total > 1 ? 's' : ''} entre passionnés de finance
+                </p>
+              </div>
+            </div>
+
+            <div className="toolbar">
+              <CategoryFilter categories={categories} active={categorie} />
+              <SortSelect value={tri} category={categorie} />
+            </div>
+
+            {data.length === 0 ? (
+              <div className="empty">
+                <p className="t">Cet espace est encore vide</p>
+                <p>
+                  <Link href="/discussions/nouvelle">Lancez la première discussion →</Link>
+                </p>
+              </div>
+            ) : (
+              <>
+                {data.map((discussion) => (
+                  <DiscussionCard key={discussion.documentId} discussion={discussion} />
+                ))}
+                <Pagination
+                  page={meta.pagination.page}
+                  pageCount={meta.pagination.pageCount}
+                  category={categorie}
+                  sort={tri}
+                />
+              </>
+            )}
+          </main>
+
+          <aside className="right">
+            <section className="card">
+              <h2 className="card-title">Bienvenue dans la communauté</h2>
+              <p className="rail-p">
+                Un projet d’investissement, une question fiscale, une analyse à partager ?
+                Échangez avec les lecteurs du Revenu.
+              </p>
+              <div className="rail-cta">
+                <Link href="/discussions/nouvelle" className="btn btn-primary">
+                  <IconPlus className="icon" />
+                  Poser une question
+                </Link>
+              </div>
+            </section>
+
+            <section className="card">
+              <h2 className="card-title">Les règles du jeu</h2>
+              <ul className="rail-list">
+                <li>
+                  <IconCheck className="icon" />
+                  Restez courtois : critiquez les idées, jamais les personnes.
+                </li>
+                <li>
+                  <IconCheck className="icon" />
+                  Précisez vos sources quand vous avancez des chiffres.
+                </li>
+                <li>
+                  <IconCheck className="icon" />
+                  Aucune recommandation personnalisée : partagez votre expérience, pas du conseil.
+                </li>
+              </ul>
+            </section>
+          </aside>
         </div>
 
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <CategoryFilter categories={categories} active={categorie} />
-          <SortSelect value={tri} category={categorie} />
-        </div>
-
-        {data.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-zinc-700 p-12 text-center text-zinc-500">
-            Aucune discussion dans cette catégorie pour le moment.
-            <br />
-            <a href="/discussions/nouvelle" className="mt-2 inline-block text-brand-light hover:underline">
-              Soyez le premier à en créer une →
-            </a>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {data.map((discussion) => (
-              <DiscussionCard key={discussion.documentId} discussion={discussion} />
-            ))}
-          </div>
-        )}
-
-        <Pagination
-          page={meta.pagination.page}
-          pageCount={meta.pagination.pageCount}
-          category={categorie}
-          sort={tri}
-        />
-      </main>
+        <footer className="foot">
+          <span>© Le Revenu — Communauté des lecteurs</span>
+          <span className="sep" aria-hidden="true">
+            ·
+          </span>
+          <a href="https://www.lerevenu.com" target="_blank" rel="noreferrer">
+            lerevenu.com
+          </a>
+          <span className="grow" />
+          <span className="muted">Forum de démonstration</span>
+        </footer>
+      </div>
     </div>
   );
 }

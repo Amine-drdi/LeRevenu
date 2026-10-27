@@ -64,130 +64,123 @@ export default function ConnexionPage() {
     }
   };
 
-  const field =
-    'w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 focus:border-brand focus:outline-none';
-
   return (
-    <div className="min-h-screen">
+    <div>
       <Header />
-      <main className="mx-auto max-w-md px-4 py-16">
-        <h1 className="font-serif text-3xl text-white">
-          {mode === 'connexion' ? 'Connexion' : 'Inscription'}
-        </h1>
-        <p className="mt-2 text-sm text-zinc-400">
-          {mode === 'connexion'
-            ? 'Accédez à votre compte pour participer aux discussions.'
-            : 'Créez un compte pour poser vos questions et répondre.'}
-        </p>
-
-        <div className="mt-6 flex rounded-lg border border-zinc-800 p-1">
-          {(['connexion', 'inscription'] as const).map((m) => (
-            <button
-              key={m}
-              type="button"
-              onClick={() => switchMode(m)}
-              className={
-                mode === m
-                  ? 'flex-1 rounded-md bg-brand py-1.5 text-sm font-semibold text-white'
-                  : 'flex-1 rounded-md py-1.5 text-sm text-zinc-400 transition hover:text-white'
-              }
-            >
-              {m === 'connexion' ? 'Connexion' : 'Inscription'}
-            </button>
-          ))}
-        </div>
-
-        <form onSubmit={onSubmit} className="mt-6 space-y-4">
-          {mode === 'connexion' ? (
-            <label className="block text-sm text-zinc-300">
-              Pseudo ou e-mail
-              <input
-                type="text"
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                required
-                autoComplete="username"
-                className={`mt-1 ${field}`}
-              />
-            </label>
-          ) : (
-            <>
-              <label className="block text-sm text-zinc-300">
-                Pseudo
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                  autoComplete="username"
-                  className={`mt-1 ${field}`}
-                />
-              </label>
-              <label className="block text-sm text-zinc-300">
-                E-mail
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoComplete="email"
-                  className={`mt-1 ${field}`}
-                />
-              </label>
-            </>
-          )}
-
-          <label className="block text-sm text-zinc-300">
-            Mot de passe
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete={mode === 'connexion' ? 'current-password' : 'new-password'}
-              className={`mt-1 ${field}`}
-            />
-          </label>
-
-          {mode === 'inscription' && (
-            <label className="block text-sm text-zinc-300">
-              Confirmer le mot de passe
-              <input
-                type="password"
-                value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
-                required
-                autoComplete="new-password"
-                className={`mt-1 ${field}`}
-              />
-            </label>
-          )}
-
-          {error && (
-            <p className="rounded-lg border border-brand/40 bg-brand/10 px-3 py-2 text-sm text-brand-light">
-              {error}
+      <div className="wrap">
+        <div className="auth-page">
+          <div style={{ textAlign: 'center' }}>
+            <h1 className="page-title">
+              {mode === 'connexion' ? 'Connexion' : 'Inscription'}
+            </h1>
+            <p className="page-sub">
+              {mode === 'connexion'
+                ? 'Accédez à votre compte pour participer aux discussions.'
+                : 'Créez un compte pour poser vos questions et répondre.'}
             </p>
-          )}
+          </div>
 
-          <button
-            type="submit"
-            disabled={pending}
-            className="w-full rounded bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {pending
-              ? 'En cours…'
-              : mode === 'connexion'
-                ? 'Se connecter'
-                : 'Créer mon compte'}
-          </button>
-        </form>
+          <div className="auth-card">
+            <div className="seg" role="tablist" aria-label="Mode">
+              {(['connexion', 'inscription'] as const).map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  role="tab"
+                  aria-selected={mode === m}
+                  onClick={() => switchMode(m)}
+                  className={mode === m ? 'on' : ''}
+                >
+                  {m === 'connexion' ? 'Connexion' : 'Inscription'}
+                </button>
+              ))}
+            </div>
 
-        <p className="mt-6 text-center text-sm text-zinc-500">
-          <Link href="/" className="text-brand-light hover:underline">
-            ← Retour aux discussions
-          </Link>
-        </p>
-      </main>
+            <form onSubmit={onSubmit} className="form">
+              {mode === 'connexion' ? (
+                <label className="fld">
+                  Pseudo ou e-mail
+                  <input
+                    type="text"
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
+                    required
+                    autoComplete="username"
+                    className="input"
+                  />
+                </label>
+              ) : (
+                <>
+                  <label className="fld">
+                    Pseudo
+                    <input
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      required
+                      autoComplete="username"
+                      className="input"
+                    />
+                  </label>
+                  <label className="fld">
+                    E-mail
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      autoComplete="email"
+                      className="input"
+                    />
+                  </label>
+                </>
+              )}
+
+              <label className="fld">
+                Mot de passe
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete={mode === 'connexion' ? 'current-password' : 'new-password'}
+                  className="input"
+                />
+              </label>
+
+              {mode === 'inscription' && (
+                <label className="fld">
+                  Confirmer le mot de passe
+                  <input
+                    type="password"
+                    value={confirm}
+                    onChange={(e) => setConfirm(e.target.value)}
+                    required
+                    autoComplete="new-password"
+                    className="input"
+                  />
+                </label>
+              )}
+
+              {error && <p className="alert">{error}</p>}
+
+              <button type="submit" disabled={pending} className="btn btn-primary btn-block">
+                {pending
+                  ? 'En cours…'
+                  : mode === 'connexion'
+                    ? 'Se connecter'
+                    : 'Créer mon compte'}
+              </button>
+            </form>
+          </div>
+
+          <p className="auth-foot">
+            <Link href="/" className="back">
+              ← Retour aux discussions
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
