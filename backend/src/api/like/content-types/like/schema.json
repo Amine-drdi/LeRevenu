@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "likes",
+  "info": {
+    "singularName": "like",
+    "pluralName": "likes",
+    "displayName": "Utile",
+    "description": "Marque « Utile » sur une discussion, une réponse ou un billet"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "likes",
+      "required": true
+    },
+    "discussion": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::discussion.discussion",
+      "inversedBy": "likes"
+    },
+    "reply": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::reply.reply",
+      "inversedBy": "likes"
+    },
+    "blog_post": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::blog-post.blog-post",
+      "inversedBy": "likes"
+    }
+  }
+}

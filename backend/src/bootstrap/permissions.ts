@@ -22,11 +22,31 @@ const PUBLIC_ACTIONS: string[] = [
   'api::discussion.discussion.findOne',
   'api::reply.reply.find',
   'api::reply.reply.findOne',
+  // Communauté (étape 7) : lecture publique.
+  'api::event.event.find',
+  'api::event.event.findOne',
+  'api::blog-post.blog-post.find',
+  'api::blog-post.blog-post.findOne',
+  'api::member.member.get',
+  'api::member.member.leaderboard',
 ];
 
 const AUTHENTICATED_EXTRA_ACTIONS: string[] = [
   'api::discussion.discussion.create',
   'api::reply.reply.create',
+  // Communauté (étape 7) : écritures et espace personnel.
+  'api::blog-post.blog-post.create',
+  'api::like.like.toggle',
+  'api::follow.follow.toggle',
+  'api::poll-vote.poll-vote.cast',
+  'api::event-rsvp.event-rsvp.toggle',
+  'api::notification.notification.find',
+  'api::notification.notification.unread-count',
+  'api::notification.notification.mark-read',
+  'api::notification.notification.mark-all-read',
+  'api::member.member.sync',
+  'api::member.member.updateme',
+  'api::discussion.discussion.solution',
 ];
 
 async function grant(strapi: Core.Strapi, roleType: string, actions: string[]): Promise<void> {

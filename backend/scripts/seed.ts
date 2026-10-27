@@ -212,6 +212,145 @@ const DISCUSSIONS = [
   },
 ] as const;
 
+/** Catégories ajoutées à l'étape 7 (maquette : onze espaces). */
+const EXTRA_CATEGORIES = [
+  { name: 'Épargne & placements', slug: 'epargne', description: 'Livrets, fonds euros, obligations, comptes à terme.' },
+  { name: 'Assurance-vie', slug: 'assurance-vie', description: 'Choisir son contrat, arbitrer, transmettre.' },
+  { name: 'Famille & transmission', slug: 'transmission', description: 'Donation, succession, protection du conjoint.' },
+  { name: 'Or, cryptos & alternatifs', slug: 'alternatifs', description: 'Or physique, cryptoactifs, forêts, private equity.' },
+  { name: 'Budget & conso', slug: 'budget', description: 'Banques, crédits, assurances, bons plans.' },
+  { name: 'Le Café du Revenu', slug: 'cafe', description: 'Présentations, discussions libres, idées pour la rédaction.' },
+] as const;
+
+/** Comptes officiels et experts vérifiés (étiquette « Expertise vérifiée »). */
+const EXTRA_USERS = [
+  {
+    username: 'LaRedaction',
+    email: 'redaction@lerevenu.example.test',
+    name: 'La rédaction du Revenu',
+    bio: 'Les journalistes du Revenu, présents chaque semaine pour répondre à vos questions.',
+    flags: { is_redaction: true },
+  },
+  {
+    username: 'Sandrine_CGP',
+    email: 'sandrine.more@example.test',
+    name: 'Sandrine Morel',
+    bio: 'CGP indépendante depuis quinze ans. Je partage ici à titre informatif, sans démarchage.',
+    flags: { title: 'Conseillère en gestion de patrimoine' },
+  },
+  {
+    username: 'Me_Garnier',
+    email: 'maitre.garnier@example.test',
+    name: 'Maître Garnier',
+    bio: 'Notaire en région lyonnaise. Successions, donations, régimes matrimoniaux.',
+    flags: { title: 'Notaire' },
+  },
+] as const;
+
+/** Contenus éditoriaux de l'accueil (maquette) : bienvenue épinglé, question et
+ *  sondage de la semaine (featured). Les sondages portent leurs options. */
+interface FeaturedDiscussion {
+  title: string;
+  type: 'discussion' | 'question' | 'poll';
+  categorySlug: string;
+  author: string;
+  pinned?: boolean;
+  featured?: 'question' | 'poll';
+  content: string;
+  options?: string[];
+  pollVotes?: Array<{ user: string; option: number }>;
+  replies: Array<{ author: string; content: string }>;
+}
+
+const FEATURED_DISCUSSIONS: FeaturedDiscussion[] = [
+  {
+    title: 'Bienvenue dans la Communauté du Revenu ! Présentez-vous ici',
+    type: 'discussion',
+    categorySlug: 'cafe',
+    author: 'LaRedaction',
+    pinned: true,
+    content:
+      "Bonjour à toutes et à tous,\n\nCet espace est le vôtre : posez vos questions, partagez vos expériences, aidez les autres membres. Les journalistes du Revenu passent chaque jour et répondent aux questions les plus utiles.\n\nPour bien démarrer :\n- Présentez-vous en une phrase en réponse à ce message\n- Choisissez les espaces qui vous intéressent\n- Marquez « Utile » les réponses qui vous aident\n\nBienvenue !",
+    replies: [
+      { author: 'alice', content: "Bonjour ! Abonnée au magazine depuis 6 ans, ravie de pouvoir enfin échanger avec d'autres lecteurs." },
+      { author: 'bob', content: "Bienvenue aux nouveaux ! N'hésitez pas à poser des questions, même basiques. On est tous passés par là." },
+      { author: 'chloe', content: "Hello, Chloé. Je viens de mettre un studio en location meublée et j'ai mille questions sur la fiscalité." },
+    ],
+  },
+  {
+    title: "Question de la semaine : quel est le meilleur conseil d'argent que vous ayez reçu ?",
+    type: 'discussion' as const,
+    categorySlug: 'cafe',
+    author: 'LaRedaction',
+    featured: 'question' as const,
+    content:
+      "Chaque semaine, la rédaction pose une question à la communauté. Les réponses les plus inspirantes pourront être reprises, avec votre accord, dans la newsletter.\n\nAlors : quel conseil d'argent a changé votre vie ? Qui vous l'a donné ?",
+    replies: [
+      { author: 'bob', content: "Mon père : « N'investis jamais l'argent dont tu auras besoin dans les cinq ans. » Ça m'a évité bien des ventes en catastrophe." },
+      { author: 'alice', content: "« Le temps passé sur le marché compte plus que le moment où on y entre. » Investir tous les mois, sans se poser de questions." },
+      { author: 'Sandrine_CGP', content: "Ma notaire : « Une succession se prépare de son vivant, pas après. » On a tout réorganisé ensuite." },
+    ],
+  },
+  {
+    title: 'Sondage de la semaine : quel est votre placement prioritaire pour les 12 prochains mois ?',
+    type: 'poll' as const,
+    categorySlug: 'epargne',
+    author: 'LaRedaction',
+    featured: 'poll' as const,
+    content:
+      "Votez puis expliquez votre choix en commentaire : les résultats seront commentés dans le prochain numéro.",
+    options: ['Assurance-vie', 'Actions / PEA', 'Immobilier / SCPI', 'Livrets et épargne sans risque', 'Or', 'Rembourser mes crédits'],
+    pollVotes: [
+      { user: 'alice', option: 1 },
+      { user: 'bob', option: 0 },
+      { user: 'chloe', option: 2 },
+      { user: 'Sandrine_CGP', option: 1 },
+      { user: 'Me_Garnier', option: 0 },
+    ] as Array<{ user: string; option: number }>,
+    replies: [
+      { author: 'alice', content: 'PEA sans hésiter, versement programmé chaque mois sur un ETF monde.' },
+      { author: 'bob', content: "Assurance-vie, pour la souplesse et la transmission." },
+    ],
+  },
+];
+
+/** Rendez-vous « Le Revenu répond » (dates relatives au jour du seed). */
+const EVENTS = [
+  { title: "Le Revenu répond : vos questions sur l'assurance-vie", host: 'La rédaction du Revenu', days: 3, cat: 'assurance-vie' },
+  { title: 'Atelier débutants : construire son premier portefeuille', host: 'La rédaction et des membres experts', days: 10, cat: 'bourse' },
+  { title: 'Le Revenu répond : préparer sa retraite', host: 'La rédaction du Revenu', days: 17, cat: 'retraite' },
+] as const;
+
+/** Billets de blog des membres (maquette), avec leurs commentaires. */
+const BLOG_POSTS = [
+  {
+    title: "Dix ans d'investissement passif : ce que j'ai appris",
+    cat: 'bourse',
+    author: 'alice',
+    body:
+      "J'ai commencé à investir en 2015, un peu par hasard, après avoir lu un dossier du Revenu sur les ETF. Dix ans plus tard, voici ce que je retiens.\n\n**1. La régularité bat le talent.** Je verse la même somme chaque mois, quoi qu'il arrive. Je n'ai jamais réussi à deviner le bon moment pour entrer ou sortir, et je ne connais personne qui y arrive durablement.\n\n**2. Les frais comptent plus qu'on ne le croit.** Un point de frais par an, sur vingt ans, c'est une part importante de la performance qui part ailleurs.\n\n**3. Le plus dur, c'est de ne rien faire.** Lors des fortes baisses, j'ai eu envie de tout vendre. Ne pas toucher à mon portefeuille a été ma meilleure décision.\n\nJe ne dis pas que c'est la bonne méthode pour tout le monde : c'est la mienne, et elle me laisse dormir tranquille.",
+    comments: [
+      { author: 'chloe', content: "Merci, c'est exactement le genre de retour qu'on ne trouve nulle part ailleurs." },
+    ],
+  },
+  {
+    title: "Mes trois pires erreurs en Bourse (et ce qu'elles m'ont appris)",
+    cat: 'bourse',
+    author: 'bob',
+    body:
+      "Quarante ans de Bourse, ça laisse des souvenirs. Pas tous bons. Je partage ici mes trois plus belles erreurs, en espérant que les plus jeunes les évitent.\n\n**Acheter une valeur parce que tout le monde en parlait.** À la fin des années 1990, j'ai acheté des valeurs technologiques au plus haut, sur la foi des conversations de bureau. J'ai mis des années à m'en remettre.\n\n**Tout miser sur une seule entreprise.** J'ai longtemps gardé une grosse part de mon portefeuille en actions de l'entreprise où je travaillais. Le jour où elle a traversé une crise, mon salaire et mon épargne étaient menacés en même temps.\n\n**Vendre dans la panique.** En 2008, j'ai vendu une partie de mes actions près du point bas, et j'ai raté une bonne partie du rebond.\n\nCe que j'en retiens : diversifier, ne jamais investir l'argent dont on aura besoin à court terme, et se méfier de ses émotions plus que des marchés.",
+    comments: [{ author: 'alice', content: 'Le deuxième point est trop souvent oublié. Merci pour ce partage.' }],
+  },
+  {
+    title: 'Première année de retraite : comment nous avons revu notre budget',
+    cat: 'retraite',
+    author: 'chloe',
+    body:
+      "Il y a un an, mon mari et moi avons pris notre retraite à quelques mois d'intervalle. Voici comment nous avons réorganisé notre budget.\n\nNous avons d'abord listé toutes nos dépenses de l'année précédente, poste par poste. Surprise : certaines ont baissé (transports, repas à l'extérieur), d'autres ont augmenté (loisirs, aide aux petits-enfants, santé).\n\n**Nos trois décisions :**\n- garder l'équivalent de six mois de dépenses sur nos livrets\n- faire des retraits programmés sur notre assurance-vie pour compléter les pensions\n- revoir tous nos contrats d'assurance, qui n'étaient plus adaptés\n\nUn an après, nous sommes sereins. Le plus important a été d'en parler à deux, chiffres sur la table.",
+    comments: [],
+  },
+] as const;
+
 async function main() {
   const { appDir, distDir } = await compileStrapi();
   const app = createStrapi({ appDir, distDir, serveAdminPanel: false });
@@ -329,6 +468,159 @@ async function main() {
     app.log.info(
       `Seed terminé : ${createdDiscussions} discussion(s) et ${createdReplies} réponse(s) créées.`
     );
+
+    // ----- Catégories supplémentaires (étape 7) -----
+    for (const { name, slug, description } of EXTRA_CATEGORIES) {
+      const existing = (await app.db
+        .query('api::category.category')
+        .findOne({ where: { slug } })) as { documentId?: string; document_id?: string } | null;
+      if (existing) {
+        categoryIds.set(slug, existing.documentId ?? existing.document_id ?? '');
+        continue;
+      }
+      const created = await app.documents('api::category.category').create({
+        data: { name, slug, description },
+      });
+      categoryIds.set(slug, created.documentId);
+      app.log.info(`Catégorie créée : ${name}`);
+    }
+
+    // ----- Comptes officiels et experts -----
+    for (const { username, email, name, bio, flags } of EXTRA_USERS) {
+      const existing = (await app.db
+        .query('plugin::users-permissions.user')
+        .findOne({ where: { username } })) as
+        | { id: number; documentId?: string; document_id?: string }
+        | null;
+      if (existing) {
+        await app.db.query('plugin::users-permissions.user').update({
+          where: { id: existing.id },
+          data: { ...flags, bio },
+        });
+        users.set(username, {
+          id: existing.id,
+          documentId: existing.documentId ?? existing.document_id ?? '',
+        });
+        continue;
+      }
+      const created = await userService.add({
+        username,
+        email,
+        password: DEMO_PASSWORD,
+        provider: 'local',
+        confirmed: true,
+        blocked: false,
+        role: role.id,
+        ...flags,
+        bio,
+      });
+      users.set(username, {
+        id: (created as { id: number }).id,
+        documentId:
+          (created as { documentId?: string }).documentId ??
+          (created as { document_id?: string }).document_id ??
+          '',
+      });
+      app.log.info(`Compte créé : ${name} (${username})`);
+    }
+
+    // ----- Contenus éditoriaux (bienvenue, question + sondage de la semaine) -----
+    for (const d of FEATURED_DISCUSSIONS) {
+      const existing = (await app.db
+        .query('api::discussion.discussion')
+        .findOne({ where: { title: d.title } })) as
+        | { id: number; documentId?: string; document_id?: string }
+        | null;
+      if (existing) continue;
+
+      const created = await app.documents('api::discussion.discussion').create({
+        data: {
+          title: d.title,
+          content: d.content,
+          type: d.type,
+          category: categoryIds.get(d.categorySlug)!,
+          author: users.get(d.author)!.documentId,
+          slug: `${slugify(d.title)}-${randomSuffix()}`,
+          ...(d.pinned ? { pinned: true } : {}),
+          ...(d.featured ? { featured: d.featured } : {}),
+          ...(d.type === 'poll' && d.options
+            ? { poll_options: d.options.map((label) => ({ label })) }
+            : {}),
+        },
+      });
+      const discussionRowId = (created as { id: number }).id;
+
+      for (const reply of d.replies) {
+        await app.documents('api::reply.reply').create({
+          data: {
+            content: reply.content,
+            discussion: created.documentId,
+            author: users.get(reply.author)!.documentId,
+          },
+        });
+      }
+      if ('pollVotes' in d && Array.isArray(d.pollVotes)) {
+        for (const v of d.pollVotes) {
+          const voter = users.get(v.user);
+          if (!voter) continue;
+          await app.db.query('api::poll-vote.poll-vote').create({
+            data: { user: voter.id, discussion: discussionRowId, option: v.option },
+          });
+        }
+      }
+      app.log.info(`Contenu éditorial créé : ${d.title}`);
+    }
+
+    // ----- Événements « Le Revenu répond » -----
+    for (const e of EVENTS) {
+      const existing = (await app.db
+        .query('api::event.event')
+        .findOne({ where: { title: e.title } })) as { id: number } | null;
+      if (existing) continue;
+      const at = new Date();
+      at.setDate(at.getDate() + e.days);
+      at.setHours(18, 30, 0, 0);
+      await app.documents('api::event.event').create({
+        data: {
+          title: e.title,
+          host: e.host,
+          at: at.toISOString(),
+          category: categoryIds.get(e.cat)!,
+        },
+      });
+      app.log.info(`Événement créé : ${e.title}`);
+    }
+
+    // ----- Billets de blog + commentaires -----
+    let createdBlogs = 0;
+    for (const b of BLOG_POSTS) {
+      const existing = (await app.db
+        .query('api::blog-post.blog-post')
+        .findOne({ where: { title: b.title } })) as
+        | { id: number; documentId?: string; document_id?: string }
+        | null;
+      if (existing) continue;
+      const created = await app.documents('api::blog-post.blog-post').create({
+        data: {
+          title: b.title,
+          body: b.body,
+          category: categoryIds.get(b.cat)!,
+          author: users.get(b.author)!.documentId,
+          slug: `${slugify(b.title)}-${randomSuffix()}`,
+        },
+      });
+      createdBlogs += 1;
+      for (const comment of b.comments) {
+        await app.documents('api::reply.reply').create({
+          data: {
+            content: comment.content,
+            blog_post: created.documentId,
+            author: users.get(comment.author)!.documentId,
+          },
+        });
+      }
+      app.log.info(`Billet créé : ${b.title}`);
+    }
     console.log(`\nComptes démo — mot de passe : ${DEMO_PASSWORD}`);
     console.log(USERS.map((u) => `  ${u.username} / ${u.email}`).join('\n'));
   } finally {

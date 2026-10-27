@@ -1,0 +1,48 @@
+{
+  "kind": "collectionType",
+  "collectionName": "notifications",
+  "info": {
+    "singularName": "notification",
+    "pluralName": "notifications",
+    "displayName": "Notification",
+    "description": "Notification d'un membre (réponse, utile, mention, badge, niveau)"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "notifications",
+      "required": true
+    },
+    "actor": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "actor_notifications"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["reply", "like", "mention", "badge", "level"],
+      "required": true
+    },
+    "message": {
+      "type": "string",
+      "required": true
+    },
+    "discussion": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::discussion.discussion",
+      "inversedBy": "notifications"
+    },
+    "read": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

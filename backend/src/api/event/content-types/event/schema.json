@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "events",
+  "info": {
+    "singularName": "event",
+    "pluralName": "events",
+    "displayName": "Événement",
+    "description": "Rendez-vous en direct « Le Revenu répond »"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "host": {
+      "type": "string",
+      "required": true
+    },
+    "at": {
+      "type": "datetime",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::category.category",
+      "inversedBy": "events"
+    },
+    "rsvps": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::event-rsvp.event-rsvp",
+      "mappedBy": "event"
+    }
+  }
+}

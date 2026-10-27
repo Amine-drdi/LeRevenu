@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "event_rsvps",
+  "info": {
+    "singularName": "event-rsvp",
+    "pluralName": "event-rsvps",
+    "displayName": "Inscription événement",
+    "description": "Inscription d'un membre à un événement (« Je participe »)"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "event_rsvps",
+      "required": true
+    },
+    "event": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::event.event",
+      "inversedBy": "rsvps",
+      "required": true
+    }
+  }
+}

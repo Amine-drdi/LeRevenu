@@ -5,7 +5,7 @@
     "singularName": "reply",
     "pluralName": "replies",
     "displayName": "Réponse",
-    "description": "Réponse publiée sur une discussion"
+    "description": "Réponse ou commentaire publié sur une discussion ou un billet"
   },
   "options": {
     "draftAndPublish": false
@@ -27,8 +27,25 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::discussion.discussion",
-      "inversedBy": "replies",
-      "required": true
+      "inversedBy": "replies"
+    },
+    "blog_post": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::blog-post.blog-post",
+      "inversedBy": "comments"
+    },
+    "solved_discussions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::discussion.discussion",
+      "mappedBy": "solution"
+    },
+    "likes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::like.like",
+      "mappedBy": "reply"
     }
   }
 }

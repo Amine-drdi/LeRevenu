@@ -77,6 +77,81 @@
       "relation": "oneToMany",
       "target": "api::reply.reply",
       "mappedBy": "author"
+    },
+    "bio": {
+      "type": "text"
+    },
+    "title": {
+      "type": "string",
+      "description": "Intitulé professionnel vérifié (étiquette « Expertise vérifiée »)"
+    },
+    "is_redaction": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_moderator": {
+      "type": "boolean",
+      "default": false
+    },
+    "photo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "badges": {
+      "type": "json",
+      "description": "Codes de badges déjà attribués (attribués par sync, jamais par le client)"
+    },
+    "interests": {
+      "type": "json",
+      "description": "Slugs de catégories choisis à l'onboarding (fil « Pour vous »)"
+    },
+    "level": {
+      "type": "integer",
+      "default": 0,
+      "description": "Dernier niveau notifié (comparaison pour la notification de niveau supérieur)"
+    },
+    "blog_posts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::blog-post.blog-post",
+      "mappedBy": "author"
+    },
+    "likes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::like.like",
+      "mappedBy": "user"
+    },
+    "follows": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::follow.follow",
+      "mappedBy": "user"
+    },
+    "notifications": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::notification.notification",
+      "mappedBy": "user"
+    },
+    "actor_notifications": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::notification.notification",
+      "mappedBy": "actor"
+    },
+    "poll_votes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::poll-vote.poll-vote",
+      "mappedBy": "user"
+    },
+    "event_rsvps": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::event-rsvp.event-rsvp",
+      "mappedBy": "user"
     }
   }
 }

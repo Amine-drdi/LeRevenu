@@ -30,6 +30,18 @@
       "relation": "oneToMany",
       "target": "api::discussion.discussion",
       "mappedBy": "category"
+    },
+    "blog_posts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::blog-post.blog-post",
+      "mappedBy": "category"
+    },
+    "events": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::event.event",
+      "mappedBy": "category"
     }
   }
 }

@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "poll_votes",
+  "info": {
+    "singularName": "poll-vote",
+    "pluralName": "poll-votes",
+    "displayName": "Vote de sondage",
+    "description": "Vote d'un membre sur un sondage (une voix par membre, modifiable)"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "poll_votes",
+      "required": true
+    },
+    "discussion": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::discussion.discussion",
+      "inversedBy": "poll_votes",
+      "required": true
+    },
+    "option": {
+      "type": "integer",
+      "required": true
+    }
+  }
+}

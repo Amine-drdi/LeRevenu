@@ -5,7 +5,7 @@
     "singularName": "discussion",
     "pluralName": "discussions",
     "displayName": "Discussion",
-    "description": "Fil de discussion ou question posée par un lecteur"
+    "description": "Fil de discussion, question ou sondage posé par un lecteur"
   },
   "options": {
     "draftAndPublish": false
@@ -26,9 +26,13 @@
     },
     "type": {
       "type": "enumeration",
-      "enum": ["question", "discussion"],
+      "enum": ["question", "discussion", "poll"],
       "required": true,
       "default": "discussion"
+    },
+    "poll_options": {
+      "type": "json",
+      "description": "Sondages uniquement : [{\"label\": \"…\"}] fixé à la création (2 à 6 options)"
     },
     "author": {
       "type": "relation",
@@ -48,6 +52,53 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::reply.reply",
+      "mappedBy": "discussion"
+    },
+    "solution": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::reply.reply",
+      "inversedBy": "solved_discussions"
+    },
+    "solution_verified": {
+      "type": "boolean",
+      "default": false
+    },
+    "views": {
+      "type": "integer",
+      "default": 0
+    },
+    "featured": {
+      "type": "enumeration",
+      "enum": ["question", "poll"],
+      "description": "Widget accueil : question/sondage de la semaine (renseigné côté serveur uniquement)"
+    },
+    "pinned": {
+      "type": "boolean",
+      "default": false
+    },
+    "poll_votes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::poll-vote.poll-vote",
+      "mappedBy": "discussion"
+    },
+    "likes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::like.like",
+      "mappedBy": "discussion"
+    },
+    "follows": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::follow.follow",
+      "mappedBy": "discussion"
+    },
+    "notifications": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::notification.notification",
       "mappedBy": "discussion"
     }
   }
