@@ -349,9 +349,9 @@ p { margin: 0; }
 
 /* Contrôle segmenté */
 .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--fill); border-radius: 10px; padding: 3px; gap: 3px; }
-.seg button { height: 32px; border-radius: 8px; font-size: 13.5px; font-weight: 500; color: var(--ink-2); transition: background-color 0.15s, color 0.15s; }
-.seg button:hover { color: var(--ink); }
-.seg button.on { background: var(--surface); color: var(--ink); font-weight: 600; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.14); }
+.seg > * { display: grid; place-items: center; height: 32px; border-radius: 8px; font-size: 13.5px; font-weight: 500; color: var(--ink-2); transition: background-color 0.15s, color 0.15s; }
+.seg > *:hover { color: var(--ink); }
+.seg .on { background: var(--surface); color: var(--ink); font-weight: 600; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.14); }
 
 /* ---------- Colonne de droite ---------- */
 .rail-p { font-size: 13.5px; line-height: 1.55; color: var(--ink-2); }
@@ -441,3 +441,106 @@ p { margin: 0; }
   .page-title { font-size: 24px; }
   .toolbar { align-items: stretch; flex-direction: column; }
 }
+
+/* ---------- Sondage ---------- */
+.poll { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.poll-opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 10px 13px;
+  font-size: 14px;
+  background: var(--surface);
+  transition: border-color 0.15s, background-color 0.15s;
+}
+.poll-opt:hover { border-color: var(--brand); background: var(--surface-3); }
+.poll-opt.mine { border-color: var(--brand); background: var(--brand-soft); font-weight: 600; }
+.poll-res { display: flex; align-items: center; gap: 10px; font-size: 13.5px; }
+.poll-res .lbl { flex: none; max-width: 40%; }
+.poll-res.mine .lbl { font-weight: 700; color: var(--brand-text); }
+.poll-track { flex: 1; height: 8px; border-radius: 99px; background: var(--fill); overflow: hidden; }
+.poll-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, color-mix(in srgb, var(--brand) 75%, #fff), var(--brand)); }
+.poll-pct { flex: none; width: 44px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink-2); }
+.poll-foot { font-size: 12.5px; color: var(--ink-3); }
+
+/* ---------- Bouton « Utile » ---------- */
+.like-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 11px;
+  border-radius: 999px;
+  border: 1px solid var(--hairline);
+  background: var(--surface);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-2);
+  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+}
+.like-btn:hover { border-color: var(--line-strong); color: var(--ink); }
+.like-btn.on { background: var(--brand-soft); border-color: transparent; color: var(--brand-text); }
+.like-btn .icon { width: 14px; height: 14px; }
+.like-row { display: flex; align-items: center; gap: 10px; }
+.article .like-row { margin-top: 16px; }
+.reply-h .like-row { margin-left: auto; }
+
+/* ---------- Étiquette meilleure réponse ---------- */
+.chip-sol { background: var(--ok-soft); color: var(--ok); }
+.chip-p { background: color-mix(in srgb, var(--pro) 14%, transparent); color: var(--pro); }
+
+/* ---------- Événements ---------- */
+.ev { display: flex; gap: 16px; align-items: flex-start; }
+.ev-date {
+  width: 58px;
+  flex: none;
+  text-align: center;
+  background: var(--brand-soft);
+  color: var(--brand-text);
+  border-radius: var(--r-sm);
+  padding: 8px 0 7px;
+  line-height: 1.1;
+}
+.ev-day { display: block; font-family: var(--f-display); font-size: 22px; font-weight: 800; }
+.ev-mon { display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.ev-body { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.ev-t { font-family: var(--f-display); font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+.ev-m { font-size: 12.5px; color: var(--ink-3); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ev-f { display: flex; align-items: center; gap: 10px; margin-top: 4px; flex-wrap: wrap; }
+
+/* ---------- Classement ---------- */
+.board { display: flex; flex-direction: column; }
+.board-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--hairline); }
+.board-row:last-child { border-bottom: 0; }
+.rank { width: 30px; flex: none; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--ink-3); }
+.rank.top { color: var(--brand-text); }
+.board-who { min-width: 0; display: flex; flex-direction: column; }
+.board-who a:hover { color: var(--brand-text); }
+.board-who .muted { font-size: 12px; }
+.pts { margin-left: auto; flex: none; font-weight: 700; font-variant-numeric: tabular-nums; }
+.pts small { display: block; font-size: 11px; font-weight: 500; color: var(--ink-3); text-align: right; }
+.rule-row { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; color: var(--ink-2); padding: 6px 0; border-bottom: 1px solid var(--hairline); }
+.rule-row:last-child { border-bottom: 0; }
+.rule-row b { font-variant-numeric: tabular-nums; color: var(--accent); }
+
+/* ---------- Profil membre ---------- */
+.profile-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.profile-id { min-width: 0; }
+.profile-name { font-family: var(--f-display); font-size: 24px; font-weight: 700; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.profile-bio { font-size: 14px; color: var(--ink-2); margin-top: 4px; max-width: 60ch; }
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; }
+.stat { background: var(--surface-2); border-radius: var(--r-sm); padding: 12px 8px; text-align: center; }
+.stat b { display: block; font-family: var(--f-display); font-size: 21px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 11.5px; color: var(--ink-3); }
+.badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+.bdg { border: 1px solid var(--hairline); border-radius: var(--r-sm); padding: 10px 12px; background: var(--surface); }
+.bdg.on { background: var(--brand-soft); border-color: color-mix(in srgb, var(--brand) 30%, transparent); }
+.bdg b { display: block; font-size: 13px; }
+.bdg.on b { color: var(--brand-text); }
+.bdg span { font-size: 12px; color: var(--ink-3); }
+.lvl-bar { margin-top: 10px; height: 8px; border-radius: 99px; background: var(--fill); overflow: hidden; }
+.lvl-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, color-mix(in srgb, var(--brand) 75%, #fff), var(--brand)); }

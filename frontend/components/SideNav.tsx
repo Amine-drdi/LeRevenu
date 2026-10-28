@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import {
   IconBuilding,
+  IconCalendar,
   IconCoffee,
   IconCoins,
   IconCreditCard,
@@ -11,9 +12,11 @@ import {
   IconHelp,
   IconHome,
   IconMessages,
+  IconPen,
   IconPercent,
   IconShield,
   IconTrendingUp,
+  IconTrophy,
   IconUmbrella,
   IconUsers,
   IconWallet,
@@ -47,9 +50,11 @@ const FALLBACK = { icon: (p: IconProps) => <IconMessages {...p} />, c: '#6e6e73'
 export default function SideNav({
   categories,
   active,
+  activeSection,
 }: {
   categories: Category[];
   active?: string;
+  activeSection?: string;
 }) {
   return (
     <nav className="side" aria-label="Espaces de discussion">
@@ -75,6 +80,26 @@ export default function SideNav({
           </Link>
         );
       })}
+
+      <p className="nav-title">Communauté</p>
+      <Link
+        href="/evenements"
+        className={`nav-link ${activeSection === 'evenements' ? 'on' : ''}`}
+      >
+        <IconCalendar className="icon" />
+        Événements
+      </Link>
+      <Link href="/blog" className={`nav-link ${activeSection === 'blog' ? 'on' : ''}`}>
+        <IconPen className="icon" />
+        Blog
+      </Link>
+      <Link
+        href="/classement"
+        className={`nav-link ${activeSection === 'classement' ? 'on' : ''}`}
+      >
+        <IconTrophy className="icon" />
+        Classement
+      </Link>
 
       <p className="nav-title">Aide</p>
       <Link href="/discussions/nouvelle" className="nav-link">

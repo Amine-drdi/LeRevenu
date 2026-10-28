@@ -20,8 +20,20 @@ export default function DiscussionCard({ discussion }: { discussion: Discussion 
   return (
     <article className="disc">
       <div className="disc-top">
-        <span className={`chip ${discussion.type === 'question' ? 'chip-q' : 'chip-d'}`}>
-          {discussion.type === 'question' ? 'Question' : 'Discussion'}
+        <span
+          className={`chip ${
+            discussion.type === 'question'
+              ? 'chip-q'
+              : discussion.type === 'poll'
+                ? 'chip-p'
+                : 'chip-d'
+          }`}
+        >
+          {discussion.type === 'question'
+            ? 'Question'
+            : discussion.type === 'poll'
+              ? 'Sondage'
+              : 'Discussion'}
         </span>
         {discussion.category && (
           <span className="chip chip-cat">{discussion.category.name}</span>

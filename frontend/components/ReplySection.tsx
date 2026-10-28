@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useState, type FormEvent } from 'react';
 
 import Avatar from '@/components/Avatar';
+import LikeButton from '@/components/LikeButton';
+import { IconCheck } from '@/components/icons';
 import { useAuth } from '@/context/AuthContext';
 import { createReply } from '@/lib/api';
 import type { Reply } from '@/types';
@@ -24,9 +26,11 @@ const dateTimeFmt = new Intl.DateTimeFormat('fr-FR', {
 export default function ReplySection({
   discussionDocumentId,
   initialReplies,
+  solutionDocumentId,
 }: {
   discussionDocumentId: string;
   initialReplies: Reply[];
+  solutionDocumentId?: string;
 }) {
   const { user, loading } = useAuth();
   const [replies, setReplies] = useState<Reply[]>(initialReplies);
@@ -73,14 +77,27 @@ export default function ReplySection({
         <ul className="reply-list">
           {replies.map((reply) => {
             const authorName = reply.author?.username ?? 'anonyme';
+            const isSolution = solutionDocumentId === reply.documentId;
             return (
               <li key={reply.documentId} className="reply">
                 <div className="reply-h">
                   <Avatar username={authorName} size="sm" />
                   <span className="who">{authorName}</span>
+                  {isSolution && (
+                    <span className="chip chip-sol">
+                      <IconCheck className="icon" style={{ width: 12, height: 12 }} />
+                      Meilleure réponse
+                    </span>
+                  )}
                   <time dateTime={reply.createdAt}>
                     {dateTimeFmt.format(new Date(reply.createdAt))}
                   </time>
+                  <LikeButton
+                    targetType="reply"
+                    targetId={reply.documentId}
+                    initialLikes={reply.likes ?? 0}
+                    initialLiked={reply.likedByMe ?? false}
+                  />
                 </div>
                 <p className="reply-b">{reply.content}</p>
               </li>

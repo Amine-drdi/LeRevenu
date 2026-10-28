@@ -4,10 +4,14 @@ import type {
   ApiErrorBody,
   AuthResponse,
   AuthUser,
+  BlogPost,
   Category,
+  CommunityEvent,
   CreateDiscussionInput,
   CreateReplyInput,
   Discussion,
+  LeaderboardData,
+  MemberProfile,
   Reply,
   StrapiListResponse,
   StrapiSingleResponse,
@@ -226,4 +230,100 @@ export async function createReply(input: CreateReplyInput): Promise<Reply> {
     method: 'POST',
     body: JSON.stringify({ data: input }),
   });
+}
+
+// ---------------------------------------------------------------------------
+// COMMUNAUTÉ (étape 7) — lectures publiques + mutations authentifiées
+// ---------------------------------------------------------------------------
+
+/** Mutations dont la réponse n'a pas d'enveloppe `data` (réponses brutes {…}). */
+async function parseMutation<T>(res: Response): Promise<T> {
+  const body = (await res.json().catch(() => null)) as (T & { error?: ApiErrorBody }) | null;
+  if (!res.ok) {
+    throw new ApiRequestError(
+      body?.error ?? { status: res.status, name: res.statusText, message: 'Erreur API inattendue.' }
+    );
+  }
+  return body as T;
+}
+
+async function authedMutation<T>(path: string, payload: unknown): Promise<T> {
+  const jwt = authStorage.getJwt();
+  const res = await fetch(`${API_URL}${path}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(jwt ? { Authorization: `Bearer ${jwt}` } : {}),
+    },
+    body: JSON.stringify(payload),
+  });
+  return parseMutation<T>(res);
+}
+
+export async function getEvents(): Promise<CommunityEvent[]> {
+  const params = new URLSearchParams({ sort: 'at:asc', populate: 'category' });
+  const res = await fetch(`${API_URL}/events?${params.toString()}`, {
+    next: { revalidate: 60, tags: ['events'] },
+  });
+  return parseResponse<CommunityEvent[]>(res);
+}
+
+export function toggleRsvp(
+  eventId: string
+): Promise<{ going: boolean; participants: number }> {
+  return authedMutation('/event-rsvp/toggle', { eventId });
+}
+
+export async function getBlogPosts(): Promise<BlogPost[]> {
+  const params = new URLSearchParams({ sort: 'createdAt:desc', populate: 'category' });
+  const res = await fetch(`${API_URL}/blog-posts?${params.toString()}`, {
+    next: { revalidate: 60, tags: ['blog'] },
+  });
+  return parseResponse<BlogPost[]>(res);
+}
+
+/** Détail d'un billet par slug — lève `notFound()` si inconnu. */
+export async function getBlogPostBySlug(slug: string): Promise<BlogPost> {
+  const params = new URLSearchParams({ 'filters[slug][$eq]': slug, populate: 'category' });
+  const res = await fetch(`${API_URL}/blog-posts?${params.toString()}`, {
+    next: { revalidate: 60, tags: [`blog:${slug}`] },
+  });
+  const json = (await res.json().catch(() => null)) as
+    | (StrapiListResponse<BlogPost> & { error?: ApiErrorBody })
+    | null;
+  if (!res.ok || !json) {
+    throw new ApiRequestError(
+      json?.error ?? { status: res.status, name: res.statusText, message: 'Erreur API inattendue.' }
+    );
+  }
+  if (json.data.length === 0) notFound();
+  return json.data[0];
+}
+
+export async function getLeaderboard(period: 'month' | 'all'): Promise<LeaderboardData> {
+  const res = await fetch(`${API_URL}/leaderboard?period=${period}`, {
+    next: { revalidate: 60, tags: ['leaderboard'] },
+  });
+  return parseResponse<LeaderboardData>(res);
+}
+
+export async function getMember(username: string): Promise<MemberProfile> {
+  const res = await fetch(`${API_URL}/members/${encodeURIComponent(username)}`, {
+    next: { revalidate: 60, tags: [`member:${username}`] },
+  });
+  return parseResponse<MemberProfile>(res);
+}
+
+export function castPollVote(
+  discussionId: string,
+  option: number
+): Promise<{ myVote: number; tally: number[]; total: number }> {
+  return authedMutation('/poll-vote/cast', { discussionId, option });
+}
+
+export function toggleLike(
+  targetType: 'discussion' | 'reply' | 'blog-post',
+  targetId: string
+): Promise<{ liked: boolean; likes: number }> {
+  return authedMutation('/like/toggle', { targetType, targetId });
 }

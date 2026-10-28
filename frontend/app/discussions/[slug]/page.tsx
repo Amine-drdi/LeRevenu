@@ -4,6 +4,8 @@ import Link from 'next/link';
 import Avatar from '@/components/Avatar';
 import Header from '@/components/Header';
 import { IconArrowLeft } from '@/components/icons';
+import LikeButton from '@/components/LikeButton';
+import PollSection from '@/components/PollSection';
 import ReplySection from '@/components/ReplySection';
 import SideNav from '@/components/SideNav';
 import { ApiRequestError, getCategories, getDiscussionBySlug } from '@/lib/api';
@@ -65,8 +67,20 @@ export default async function DiscussionDetail({
 
             <article className="article">
               <div className="disc-top">
-                <span className={`chip ${discussion.type === 'question' ? 'chip-q' : 'chip-d'}`}>
-                  {discussion.type === 'question' ? 'Question' : 'Discussion'}
+                <span
+                  className={`chip ${
+                    discussion.type === 'question'
+                      ? 'chip-q'
+                      : discussion.type === 'poll'
+                        ? 'chip-p'
+                        : 'chip-d'
+                  }`}
+                >
+                  {discussion.type === 'question'
+                    ? 'Question'
+                    : discussion.type === 'poll'
+                      ? 'Sondage'
+                      : 'Discussion'}
                 </span>
                 {discussion.category && (
                   <span className="chip chip-cat">{discussion.category.name}</span>
@@ -89,11 +103,31 @@ export default async function DiscussionDetail({
               </p>
 
               <div className="article-b">{discussion.content}</div>
+
+              {discussion.type === 'poll' && discussion.poll && (
+                <PollSection
+                  discussionDocumentId={discussion.documentId}
+                  initialPoll={discussion.poll}
+                />
+              )}
+
+              <div className="like-row">
+                <LikeButton
+                  targetType="discussion"
+                  targetId={discussion.documentId}
+                  initialLikes={discussion.likes ?? 0}
+                  initialLiked={discussion.likedByMe ?? false}
+                />
+                <span className="muted num" style={{ fontSize: 12.5 }}>
+                  {discussion.views ?? 0} vue{(discussion.views ?? 0) > 1 ? 's' : ''}
+                </span>
+              </div>
             </article>
 
             <ReplySection
               discussionDocumentId={discussion.documentId}
               initialReplies={discussion.replies ?? []}
+              solutionDocumentId={discussion.solution?.documentId}
             />
           </main>
         </div>
