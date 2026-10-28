@@ -7,7 +7,8 @@ import { toggleLike } from '@/lib/api';
 
 /**
  * Bascule « Utile » sur une cible (discussion, réponse ou billet).
- * 401 si non connecté → renvoi vers /connexion, comme les formulaires.
+ * État local mis à jour depuis la réponse de l'API ; 401 si non connecté
+ * → renvoi vers /connexion, comme les formulaires.
  */
 export default function LikeButton({
   targetType,
@@ -40,17 +41,21 @@ export default function LikeButton({
   };
 
   return (
-    <span className="like-row">
+    <span className="flex items-center gap-2">
       <button
         type="button"
         onClick={onToggle}
-        className={`like-btn ${liked ? 'on' : ''}`}
+        className={`inline-flex h-[30px] items-center gap-1.5 rounded-full border px-[11px] text-[12.5px] font-semibold transition ${
+          liked
+            ? 'border-transparent bg-brand-soft text-brand-text'
+            : 'border-hairline bg-surface text-ink-2 hover:border-line-strong hover:text-ink'
+        }`}
         aria-pressed={liked}
       >
-        <IconHeart className="icon" />
+        <IconHeart className="h-[14px] w-[14px]" />
         Utile · {likes}
       </button>
-      {error && <span className="muted" style={{ fontSize: 12 }}>Erreur, réessayez.</span>}
+      {error && <span className="text-xs text-ink-3">Erreur, réessayez.</span>}
     </span>
   );
 }

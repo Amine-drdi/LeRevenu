@@ -39,17 +39,21 @@ export default function RsvpButton({
   };
 
   return (
-    <span className="like-row">
+    <span className="flex items-center gap-2.5">
       <button
         type="button"
         onClick={onToggle}
         disabled={pending}
-        className={`btn btn-sm ${going ? 'btn-secondary' : 'btn-primary'}`}
+        className={`inline-flex h-[30px] items-center justify-center gap-[7px] whitespace-nowrap rounded-lg border px-3 text-[13px] font-semibold transition active:scale-[0.98] ${
+          going
+            ? 'border-hairline bg-surface text-ink shadow-soft hover:bg-surface-2'
+            : 'border-transparent bg-gradient-to-b from-[color-mix(in_srgb,#eb0f0f_82%,#fff)] to-brand text-white shadow-btn hover:brightness-95'
+        }`}
         aria-pressed={going}
       >
         {going ? '✓ Je participe' : 'Je participe'}
       </button>
-      <span className="muted num" style={{ fontSize: 12.5 }}>
+      <span className="text-[12.5px] tabular-nums text-ink-3">
         {count} participant{count > 1 ? 's' : ''}
       </span>
     </span>

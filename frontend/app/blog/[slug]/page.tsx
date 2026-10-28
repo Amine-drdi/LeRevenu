@@ -48,37 +48,49 @@ export default async function BlogPostPage({
     <div>
       <Header />
       <div className="wrap">
-        <div className="layout no-right">
+        <div className="grid items-start gap-7 pb-24 pt-6 min-[1100px]:grid-cols-[212px_minmax(0,1fr)]">
           <SideNav categories={categories} activeSection="blog" />
 
-          <main className="main">
-            <Link href="/blog" className="back">
+          <main className="flex min-w-0 flex-col gap-[18px]">
+            <Link href="/blog" className="inline-flex w-fit items-center gap-1.5 text-[13.5px] font-medium text-ink-3 hover:text-brand-text">
               <IconArrowLeft className="icon" />
               Tous les billets
             </Link>
 
-            <article className="article">
-              <div className="disc-top">
-                {post.author?.is_redaction && <span className="chip chip-redac">Rédaction</span>}
-                {post.category && <span className="chip chip-cat">{post.category.name}</span>}
-                <span className="sep" aria-hidden="true">·</span>
+            <article className="rounded-card border border-hairline bg-surface p-6 shadow-card">
+              <div className="flex flex-wrap items-center gap-2 text-xs text-ink-3">
+                {post.author?.is_redaction && (
+                  <span className="inline-flex h-[22px] items-center gap-[5px] whitespace-nowrap rounded-full bg-redac-soft px-[9px] text-[11.5px] font-semibold text-redac">
+                    Rédaction
+                  </span>
+                )}
+                {post.category && (
+                  <span className="inline-flex h-[22px] items-center gap-[5px] whitespace-nowrap rounded-full border border-hairline px-[9px] text-[11.5px] font-medium text-ink-3">
+                    {post.category.name}
+                  </span>
+                )}
+                <span className="text-line-strong" aria-hidden="true">·</span>
                 <time dateTime={post.createdAt}>
                   {dateTimeFmt.format(new Date(post.createdAt))}
                 </time>
               </div>
 
-              <h1 className="article-t">{post.title}</h1>
+              <h1 className="mt-3 font-display text-[27px] font-bold leading-[1.25] tracking-[-0.015em]">
+                {post.title}
+              </h1>
 
-              <p className="article-m">
+              <p className="mt-3.5 flex items-center gap-2.5 text-[13px] text-ink-3">
                 <Avatar username={authorName} size="sm" />
                 <span>
-                  par <span className="who">{authorName}</span>
+                  par <span className="font-semibold text-ink-2">{authorName}</span>
                 </span>
               </p>
 
-              <div className="article-b">{post.body}</div>
+              <div className="mt-4 whitespace-pre-line border-t border-hairline pt-4 text-[15px] leading-[1.65]">
+                {post.body}
+              </div>
 
-              <div className="like-row">
+              <div className="mt-4 flex items-center gap-2.5">
                 <LikeButton
                   targetType="blog-post"
                   targetId={post.documentId}

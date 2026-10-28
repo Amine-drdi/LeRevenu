@@ -9,6 +9,9 @@ import { useAuth } from '@/context/AuthContext';
 import { createDiscussion, getCategories } from '@/lib/api';
 import type { Category, DiscussionType } from '@/types';
 
+const SEG = 'grid h-8 place-items-center rounded-lg text-[13.5px] font-medium text-ink-2 transition hover:text-ink';
+const SEG_ON = 'bg-surface font-semibold text-ink shadow-[0_1px_3px_rgba(0,0,0,0.14)]';
+
 /**
  * Création d'une discussion (Client Component).
  *
@@ -73,9 +76,9 @@ export default function NouvelleDiscussionPage() {
       <div>
         <Header />
         <div className="wrap">
-          <div className="center-page">
-            <div className="skel" style={{ height: 36, maxWidth: 320 }} />
-            <div className="skel" style={{ height: 420 }} />
+          <div className="mx-auto flex max-w-[680px] flex-col gap-5 py-8 pb-24">
+            <div className="skel h-9 max-w-[320px]" />
+            <div className="skel h-[420px]" />
           </div>
         </div>
       </div>
@@ -87,13 +90,12 @@ export default function NouvelleDiscussionPage() {
       <div>
         <Header />
         <div className="wrap">
-          <div className="center-page" style={{ textAlign: 'center' }}>
-            <h1 className="page-title">Nouvelle discussion</h1>
-            <div className="empty">
-              <p className="t">Connectez-vous pour participer</p>
+          <div className="mx-auto flex max-w-[680px] flex-col gap-5 py-8 pb-24">
+            <h1 className="text-center font-display text-[28px] font-bold tracking-[-0.015em]">Nouvelle discussion</h1>
+            <div className="rounded-card border-[1.5px] border-dashed border-line-strong bg-surface/50 p-11 text-center text-sm text-ink-3">
+              <p className="mb-1 font-display text-lg font-bold text-ink">Connectez-vous pour participer</p>
               <p>
-                <Link href="/connexion">Se connecter</Link> ou créer un compte, puis lancez
-                votre discussion.
+                <Link href="/connexion" className="font-semibold text-brand-text hover:underline">Se connecter</Link> ou créer un compte, puis lancez votre discussion.
               </p>
             </div>
           </div>
@@ -106,18 +108,18 @@ export default function NouvelleDiscussionPage() {
     <div>
       <Header />
       <div className="wrap">
-        <div className="center-page">
+        <div className="mx-auto flex max-w-[680px] flex-col gap-5 py-8 pb-24">
           <div>
-            <h1 className="page-title">Nouvelle discussion</h1>
-            <p className="page-sub">
+            <h1 className="font-display text-[28px] font-bold tracking-[-0.015em]">Nouvelle discussion</h1>
+            <p className="mt-0.5 text-sm text-ink-3">
               Partagez une question ou un sujet avec la communauté.
             </p>
           </div>
 
-          <form onSubmit={onSubmit} className="form">
-            <label className="fld">
+          <form onSubmit={onSubmit} className="flex flex-col gap-4">
+            <label className="block text-[13px] font-medium text-ink-2">
               Type
-              <div className="seg" style={{ marginTop: 6 }}>
+              <div className="mt-1.5 grid auto-cols-fr grid-flow-col gap-[3px] rounded-[10px] bg-fill p-[3px]">
                 {(
                   [
                     ['discussion', 'Discussion'],
@@ -127,7 +129,7 @@ export default function NouvelleDiscussionPage() {
                   <button
                     key={value}
                     type="button"
-                    className={type === value ? 'on' : ''}
+                    className={`${SEG} ${type === value ? SEG_ON : ''}`}
                     onClick={() => setType(value)}
                   >
                     {label}
@@ -136,13 +138,13 @@ export default function NouvelleDiscussionPage() {
               </div>
             </label>
 
-            <label className="fld">
+            <label className="block text-[13px] font-medium text-ink-2">
               Espace
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 required
-                className="select"
+                className="mt-1.5 h-[38px] w-full rounded-ctl border border-line bg-surface px-3 text-sm transition focus:border-brand focus:outline-none focus:ring-[3px] focus:ring-brand/25"
               >
                 {categories.map((c) => (
                   <option key={c.documentId} value={c.documentId}>
@@ -152,7 +154,7 @@ export default function NouvelleDiscussionPage() {
               </select>
             </label>
 
-            <label className="fld">
+            <label className="block text-[13px] font-medium text-ink-2">
               Titre
               <input
                 type="text"
@@ -161,11 +163,11 @@ export default function NouvelleDiscussionPage() {
                 required
                 minLength={10}
                 placeholder="Un titre explicite (10 caractères minimum)"
-                className="input"
+                className="mt-1.5 h-[38px] w-full rounded-ctl border border-line bg-surface px-3 text-sm transition focus:border-brand focus:outline-none focus:ring-[3px] focus:ring-brand/25"
               />
             </label>
 
-            <label className="fld">
+            <label className="block text-[13px] font-medium text-ink-2">
               Contenu
               <textarea
                 value={content}
@@ -173,17 +175,21 @@ export default function NouvelleDiscussionPage() {
                 required
                 rows={10}
                 placeholder="Détaillez votre question ou votre sujet…"
-                className="area"
+                className="mt-1.5 w-full resize-y rounded-ctl border border-line bg-surface px-3 py-2.5 text-sm leading-normal transition focus:border-brand focus:outline-none focus:ring-[3px] focus:ring-brand/25"
               />
             </label>
 
-            {error && <p className="alert">{error}</p>}
+            {error && (
+              <p className="flex items-start gap-2 rounded-ctl border border-[color-mix(in_srgb,var(--alert)_30%,transparent)] bg-[var(--alert-soft)] px-3 py-2.5 text-[13.5px] text-[var(--alert)]">
+                {error}
+              </p>
+            )}
 
-            <div className="form-actions">
-              <button type="submit" disabled={pending} className="btn btn-primary">
+            <div className="flex flex-wrap items-center gap-3.5">
+              <button type="submit" disabled={pending} className="inline-flex h-9 items-center justify-center gap-[7px] whitespace-nowrap rounded-ctl border border-transparent bg-gradient-to-b from-[color-mix(in_srgb,#eb0f0f_82%,#fff)] to-brand px-4 text-sm font-semibold text-white shadow-btn transition hover:brightness-95 active:scale-[0.98] disabled:opacity-50">
                 {pending ? 'Publication…' : 'Publier la discussion'}
               </button>
-              <Link href="/" className="btn btn-quiet">
+              <Link href="/" className="inline-flex h-9 items-center justify-center rounded-ctl px-4 text-sm font-semibold text-ink-2 transition hover:bg-fill hover:text-ink">
                 Annuler
               </Link>
             </div>

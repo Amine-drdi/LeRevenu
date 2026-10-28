@@ -7,6 +7,11 @@ import { useState, type FormEvent } from 'react';
 import Header from '@/components/Header';
 import { useAuth } from '@/context/AuthContext';
 
+const SEG = 'grid h-8 place-items-center rounded-lg text-[13.5px] font-medium text-ink-2 transition hover:text-ink';
+const SEG_ON = 'bg-surface font-semibold text-ink shadow-[0_1px_3px_rgba(0,0,0,0.14)]';
+const INPUT =
+  'mt-1.5 h-[38px] w-full rounded-ctl border border-line bg-surface px-3 text-sm transition focus:border-brand focus:outline-none focus:ring-[3px] focus:ring-brand/25';
+
 /**
  * Page de connexion / inscription (Client Component).
  *
@@ -68,20 +73,20 @@ export default function ConnexionPage() {
     <div>
       <Header />
       <div className="wrap">
-        <div className="auth-page">
-          <div style={{ textAlign: 'center' }}>
-            <h1 className="page-title">
+        <div className="mx-auto flex max-w-[430px] flex-col gap-4 py-12 pb-24">
+          <div className="text-center">
+            <h1 className="font-display text-[28px] font-bold tracking-[-0.015em]">
               {mode === 'connexion' ? 'Connexion' : 'Inscription'}
             </h1>
-            <p className="page-sub">
+            <p className="mt-0.5 text-sm text-ink-3">
               {mode === 'connexion'
                 ? 'Accédez à votre compte pour participer aux discussions.'
                 : 'Créez un compte pour poser vos questions et répondre.'}
             </p>
           </div>
 
-          <div className="auth-card">
-            <div className="seg" role="tablist" aria-label="Mode">
+          <div className="flex flex-col gap-4 rounded-card border border-hairline bg-surface p-6 shadow-lift">
+            <div className="grid auto-cols-fr grid-flow-col gap-[3px] rounded-[10px] bg-fill p-[3px]" role="tablist" aria-label="Mode">
               {(['connexion', 'inscription'] as const).map((m) => (
                 <button
                   key={m}
@@ -89,16 +94,16 @@ export default function ConnexionPage() {
                   role="tab"
                   aria-selected={mode === m}
                   onClick={() => switchMode(m)}
-                  className={mode === m ? 'on' : ''}
+                  className={`${SEG} ${mode === m ? SEG_ON : ''}`}
                 >
                   {m === 'connexion' ? 'Connexion' : 'Inscription'}
                 </button>
               ))}
             </div>
 
-            <form onSubmit={onSubmit} className="form">
+            <form onSubmit={onSubmit} className="flex flex-col gap-4">
               {mode === 'connexion' ? (
-                <label className="fld">
+                <label className="block text-[13px] font-medium text-ink-2">
                   Pseudo ou e-mail
                   <input
                     type="text"
@@ -106,12 +111,12 @@ export default function ConnexionPage() {
                     onChange={(e) => setIdentifier(e.target.value)}
                     required
                     autoComplete="username"
-                    className="input"
+                    className={INPUT}
                   />
                 </label>
               ) : (
                 <>
-                  <label className="fld">
+                  <label className="block text-[13px] font-medium text-ink-2">
                     Pseudo
                     <input
                       type="text"
@@ -119,10 +124,10 @@ export default function ConnexionPage() {
                       onChange={(e) => setUsername(e.target.value)}
                       required
                       autoComplete="username"
-                      className="input"
+                      className={INPUT}
                     />
                   </label>
-                  <label className="fld">
+                  <label className="block text-[13px] font-medium text-ink-2">
                     E-mail
                     <input
                       type="email"
@@ -130,13 +135,13 @@ export default function ConnexionPage() {
                       onChange={(e) => setEmail(e.target.value)}
                       required
                       autoComplete="email"
-                      className="input"
+                      className={INPUT}
                     />
                   </label>
                 </>
               )}
 
-              <label className="fld">
+              <label className="block text-[13px] font-medium text-ink-2">
                 Mot de passe
                 <input
                   type="password"
@@ -144,12 +149,12 @@ export default function ConnexionPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   autoComplete={mode === 'connexion' ? 'current-password' : 'new-password'}
-                  className="input"
+                  className={INPUT}
                 />
               </label>
 
               {mode === 'inscription' && (
-                <label className="fld">
+                <label className="block text-[13px] font-medium text-ink-2">
                   Confirmer le mot de passe
                   <input
                     type="password"
@@ -157,14 +162,18 @@ export default function ConnexionPage() {
                     onChange={(e) => setConfirm(e.target.value)}
                     required
                     autoComplete="new-password"
-                    className="input"
+                    className={INPUT}
                   />
                 </label>
               )}
 
-              {error && <p className="alert">{error}</p>}
+              {error && (
+                <p className="flex items-start gap-2 rounded-ctl border border-[color-mix(in_srgb,var(--alert)_30%,transparent)] bg-[var(--alert-soft)] px-3 py-2.5 text-[13.5px] text-[var(--alert)]">
+                  {error}
+                </p>
+              )}
 
-              <button type="submit" disabled={pending} className="btn btn-primary btn-block">
+              <button type="submit" disabled={pending} className="inline-flex h-9 w-full items-center justify-center gap-[7px] whitespace-nowrap rounded-ctl border border-transparent bg-gradient-to-b from-[color-mix(in_srgb,#eb0f0f_82%,#fff)] to-brand px-4 text-sm font-semibold text-white shadow-btn transition hover:brightness-95 active:scale-[0.98] disabled:opacity-50">
                 {pending
                   ? 'En cours…'
                   : mode === 'connexion'
@@ -174,8 +183,8 @@ export default function ConnexionPage() {
             </form>
           </div>
 
-          <p className="auth-foot">
-            <Link href="/" className="back">
+          <p className="text-center text-[13.5px] text-ink-3">
+            <Link href="/" className="inline-flex items-center gap-1.5 font-medium hover:text-brand-text">
               ← Retour aux discussions
             </Link>
           </p>

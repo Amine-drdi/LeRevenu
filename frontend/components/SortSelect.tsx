@@ -18,12 +18,12 @@ export default function SortSelect({ value, category }: { value: string; categor
   };
 
   return (
-    <label className="tool-label">
+    <label className="flex items-center gap-[7px] text-[13px] text-ink-3">
       Trier
       <select
         value={value}
         onChange={onChange}
-        className="select inline"
+        className="h-[30px] w-auto rounded-ctl border border-line bg-surface px-3 text-[13px] focus:border-brand focus:outline-none focus:ring-[3px] focus:ring-brand/25"
       >
         <option value="recentes">Plus récentes</option>
         <option value="anciennes">Plus anciennes</option>

@@ -4,8 +4,8 @@ Espace communautaire des lecteurs du Revenu : discussions, questions, sondages,
 billets de blog, événements et classement des membres.
 
 Monorepo **backend Strapi v5** (API + admin) et **frontend Next.js 15** (App Router),
-base **PostgreSQL** (Supabase en cible, SQLite possible en local), design system
-maison charte Le Revenu (clair/sombre automatique, sans Tailwind).
+base **PostgreSQL** (Supabase en cible, SQLite possible en local), interface en
+**Tailwind CSS** (design system charte Le Revenu, clair/sombre automatique).
 
 ```
 ├── backend/                # API Strapi v5 (port 1337)
@@ -152,11 +152,14 @@ API casse la compilation frontend, jamais silencieusement à l'exécution.
 - **Limite assumée du JWT en localStorage** : lisible par du JS (risque XSS).
   Alternative de production documentée dans le code : cookie `httpOnly` +
   route handler Next faisant proxy des appels authentifiés.
-- **Design system en CSS pur** (pas de Tailwind) : tokens (couleurs, ombres,
-  rayons, polices Playfair Display / Inter) en variables CSS, thème
-  clair/sombre par `prefers-color-scheme`, composants en classes sémantiques
-  (`.card`, `.disc`, `.btn`, `.poll`…). Tailwind a été retiré (config,
-  PostCSS, dépendances) après migration complète.
+- **Design system Tailwind CSS** (imposé par le cahier des charges) : les
+  utilitaires (`bg-surface`, `rounded-card`, `font-display`…) consomment des
+  tokens déclarés dans `tailwind.config.ts` qui référencent les variables CSS
+  de `globals.css` (`--ink`, `--surface`, `--brand-soft`…). Le thème
+  clair/sombre bascule par `prefers-color-scheme` — les variables flippent,
+  les utilitaires suivent, sans variante `dark:`. Seuls éléments hors
+  utilitaires : les variables elles-mêmes, les dégradés dynamiques (avatars,
+  icônes d'espaces via `--c`) et l'animation de skeleton.
 
 ### Modèle de données communautaire
 

@@ -45,7 +45,7 @@ export default function PollSection({
   const hasVoted = poll.myVote != null;
 
   return (
-    <div className="poll" role="group" aria-label="Sondage">
+    <div className="mt-4 flex flex-col gap-2" role="group" aria-label="Sondage">
       {poll.options.map((option, index) => {
         const pct = poll.total > 0 ? Math.round((option.votes / poll.total) * 100) : 0;
         if (!hasVoted) {
@@ -53,7 +53,7 @@ export default function PollSection({
             <button
               key={index}
               type="button"
-              className="poll-opt"
+              className="flex w-full items-center gap-2.5 rounded-ctl border border-line bg-surface px-3.5 py-2.5 text-left text-sm transition hover:border-brand hover:bg-surface-3"
               disabled={pending}
               onClick={() => vote(index)}
             >
@@ -61,21 +61,33 @@ export default function PollSection({
             </button>
           );
         }
+        const mine = poll.myVote === index;
         return (
-          <div key={index} className={`poll-res ${poll.myVote === index ? 'mine' : ''}`}>
-            <span className="lbl">{option.label}</span>
-            <span className="poll-track">
-              <span className="poll-fill" style={{ width: `${pct}%` }} />
+          <div key={index} className="flex items-center gap-2.5 text-[13.5px]">
+            <span className={`max-w-[40%] flex-none ${mine ? 'font-bold text-brand-text' : ''}`}>
+              {option.label}
             </span>
-            <span className="poll-pct">{pct} %</span>
+            <span className="h-2 flex-1 overflow-hidden rounded-full bg-fill">
+              <span
+                className="block h-full rounded-full bg-gradient-to-r from-[color-mix(in_srgb,#eb0f0f_75%,#fff)] to-brand"
+                style={{ width: `${pct}%` }}
+              />
+            </span>
+            <span className="w-11 flex-none text-right font-bold tabular-nums text-ink-2">
+              {pct} %
+            </span>
           </div>
         );
       })}
-      <p className="poll-foot">
+      <p className="text-[12.5px] text-ink-3">
         {poll.total} vote{poll.total > 1 ? 's' : ''}
         {hasVoted ? ' · vous pouvez changer votre vote' : ''}
       </p>
-      {error && <p className="alert">Vote impossible pour le moment, réessayez.</p>}
+      {error && (
+        <p className="flex items-start gap-2 rounded-ctl border border-[color-mix(in_srgb,var(--alert)_30%,transparent)] bg-[var(--alert-soft)] px-3 py-2.5 text-[13.5px] text-[var(--alert)]">
+          Vote impossible pour le moment, réessayez.
+        </p>
+      )}
     </div>
   );
 }

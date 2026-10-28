@@ -26,22 +26,25 @@ export default function Pagination({
     return query ? `/?${query}` : '/';
   };
 
+  const pg =
+    'inline-flex h-[34px] items-center gap-1.5 rounded-[9px] border border-hairline bg-surface px-3.5 text-[13.5px] font-medium text-ink-2 shadow-soft transition hover:bg-surface-2 hover:text-ink';
+
   return (
-    <nav aria-label="Pagination" className="pager">
+    <nav aria-label="Pagination" className="mt-1.5 flex items-center justify-center gap-2.5">
       <Link
         href={href(page - 1)}
         aria-disabled={page <= 1}
-        className={`pg ${page <= 1 ? 'off' : ''}`}
+        className={`${pg} ${page <= 1 ? 'pointer-events-none opacity-45' : ''}`}
       >
         ← Précédent
       </Link>
-      <span className="pg-info">
+      <span className="text-[13px] tabular-nums text-ink-3">
         Page {page} / {pageCount}
       </span>
       <Link
         href={href(page + 1)}
         aria-disabled={page >= pageCount}
-        className={`pg ${page >= pageCount ? 'off' : ''}`}
+        className={`${pg} ${page >= pageCount ? 'pointer-events-none opacity-45' : ''}`}
       >
         Suivant →
       </Link>

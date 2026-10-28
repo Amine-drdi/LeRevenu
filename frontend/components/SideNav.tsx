@@ -42,10 +42,15 @@ const SPACE_STYLE: Record<string, { icon: (p: IconProps) => ReactNode; c: string
 
 const FALLBACK = { icon: (p: IconProps) => <IconMessages {...p} />, c: '#6e6e73' };
 
+const NAV_LINK =
+  'flex cursor-pointer items-center gap-[11px] rounded-ctl px-2.5 py-[7px] text-sm font-medium text-ink-2 transition hover:bg-fill hover:text-ink';
+const NAV_ON = 'bg-fill-2 font-semibold text-ink';
+const NAV_TITLE = 'px-2.5 pb-1.5 pt-[18px] text-[11.5px] font-semibold text-ink-3 max-[1099px]:hidden';
+
 /**
- * Navigation latérale (Server Component) : accueil + espaces de discussion.
- * Chaque espace est un filtre de la liste (paramètre `?categorie=`, le
- * filtrage est exécuté côté Strapi) avec son icône colorée.
+ * Navigation latérale (Server Component) : accueil + espaces de discussion
+ * (filtres `?categorie=`, exécutés côté Strapi) + section Communauté.
+ * Sous 1100 px la barre passe en rangée horizontale défilante.
  */
 export default function SideNav({
   categories,
@@ -56,64 +61,54 @@ export default function SideNav({
   active?: string;
   activeSection?: string;
 }) {
-  return (
-    <nav className="side" aria-label="Espaces de discussion">
-      <Link href="/" className={`nav-link ${!active ? 'on' : ''}`}>
-        <IconHome className="icon" />
-        Accueil
-      </Link>
+  const link = (href: string, label: string, icon: ReactNode, isOn: boolean) => (
+    <Link
+      key={href}
+      href={href}
+      className={`${NAV_LINK} ${isOn ? NAV_ON : ''} max-[1099px]:flex-none max-[1099px]:border max-[1099px]:border-hairline max-[1099px]:bg-surface ${
+        isOn ? 'max-[1099px]:border-transparent max-[1099px]:bg-brand max-[1099px]:text-white' : ''
+      }`}
+    >
+      {icon}
+      {label}
+    </Link>
+  );
 
-      <p className="nav-title">Espaces</p>
+  return (
+    <nav
+      className="top-[86px] flex flex-col gap-0.5 max-[1099px]:flex-row max-[1099px]:items-center max-[1099px]:gap-2 max-[1099px]:overflow-x-auto max-[1099px]:pb-1 min-[1100px]:sticky"
+      aria-label="Espaces de discussion"
+    >
+      {link('/', 'Accueil', <IconHome className={`icon ${!active && !activeSection ? 'text-brand-text max-[1099px]:text-current' : ''}`} />, !active && !activeSection)}
+
+      <p className={NAV_TITLE}>Espaces</p>
       {categories.map((category) => {
         const style = SPACE_STYLE[category.slug] ?? FALLBACK;
-        return (
-          <Link
-            key={category.documentId}
-            href={`/?categorie=${encodeURIComponent(category.slug)}`}
-            className={`nav-link ${active === category.slug ? 'on' : ''}`}
-            title={category.description ?? category.name}
-          >
-            <span className="sp-ic" style={{ '--c': style.c } as CSSProperties}>
-              {style.icon({ className: 'icon' })}
-            </span>
-            {category.name}
-          </Link>
+        return link(
+          `/?categorie=${encodeURIComponent(category.slug)}`,
+          category.name,
+          <span className="sp-ic" style={{ '--c': style.c } as CSSProperties}>
+            {style.icon({ className: 'icon' })}
+          </span>,
+          active === category.slug
         );
       })}
 
-      <p className="nav-title">Communauté</p>
-      <Link
-        href="/evenements"
-        className={`nav-link ${activeSection === 'evenements' ? 'on' : ''}`}
-      >
-        <IconCalendar className="icon" />
-        Événements
-      </Link>
-      <Link href="/blog" className={`nav-link ${activeSection === 'blog' ? 'on' : ''}`}>
-        <IconPen className="icon" />
-        Blog
-      </Link>
-      <Link
-        href="/classement"
-        className={`nav-link ${activeSection === 'classement' ? 'on' : ''}`}
-      >
-        <IconTrophy className="icon" />
-        Classement
-      </Link>
+      <p className={NAV_TITLE}>Communauté</p>
+      {link('/evenements', 'Événements', <IconCalendar className={`icon ${activeSection === 'evenements' ? 'text-brand-text max-[1099px]:text-current' : ''}`} />, activeSection === 'evenements')}
+      {link('/blog', 'Blog', <IconPen className={`icon ${activeSection === 'blog' ? 'text-brand-text max-[1099px]:text-current' : ''}`} />, activeSection === 'blog')}
+      {link('/classement', 'Classement', <IconTrophy className={`icon ${activeSection === 'classement' ? 'text-brand-text max-[1099px]:text-current' : ''}`} />, activeSection === 'classement')}
 
-      <p className="nav-title">Aide</p>
-      <Link href="/discussions/nouvelle" className="nav-link">
-        <IconHelp className="icon" />
-        Poser une question
-      </Link>
+      <p className={NAV_TITLE}>Aide</p>
+      {link('/discussions/nouvelle', 'Poser une question', <IconHelp className="icon" />, false)}
       <a
         href="https://www.lerevenu.com"
-        className="nav-link nav-foot"
+        className={`${NAV_LINK} mt-[18px] border-t border-hairline pt-3 text-[13px] text-ink-3 hover:text-brand-text max-[1099px]:hidden`}
         target="_blank"
         rel="noreferrer"
       >
         lerevenu.com
-        <IconExternal className="icon ext" />
+        <IconExternal className="ml-auto h-[13px] w-[13px]" />
       </a>
     </nav>
   );
